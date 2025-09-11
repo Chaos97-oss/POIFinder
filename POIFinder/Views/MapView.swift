@@ -59,6 +59,7 @@ struct MapView: View {
             .sheet(item: $viewModel.selectedPOI) { poi in
                 POIDetailView(poi: poi, viewModel: viewModel)
             }
+
             
             // Controls overlay
             VStack(spacing: 10) {
