@@ -27,7 +27,7 @@ struct MapView: View {
             Map(coordinateRegion: $region, annotationItems: allAnnotations) { (annotation: POI) in
                 MapAnnotation(coordinate: annotation.coordinate) {
                     // Distinguish user marker by id
-                    if annotation.id == userAnnotation?.id {
+                    if annotation.category == "User" {
                         // Red pin for user
                         Image(systemName: "mappin.circle.fill")
                             .foregroundColor(.red)
@@ -35,7 +35,6 @@ struct MapView: View {
                     } else {
                         // Blue pin for POIs
                         Button(action: {
-                            // Set selected POI and recenter
                             viewModel.selectedPOI = annotation
                             region.center = annotation.coordinate
                             region.span = MKCoordinateSpan(latitudeDelta: 0.03, longitudeDelta: 0.03)
