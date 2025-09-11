@@ -17,7 +17,7 @@ class MapViewModel: ObservableObject {
     private let searchService = POISearchService()
     private let completerService = SearchCompleterService()
     private var cancellables = Set<AnyCancellable>()
-
+    
     init() {
         
         completerService.$suggestions
@@ -34,6 +34,7 @@ class MapViewModel: ObservableObject {
                 print("POIs found:", results.map { $0.name })
             }
         }
+        
     }
 
     

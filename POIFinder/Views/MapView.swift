@@ -20,36 +20,25 @@ struct MapView: View {
     
     @State private var hasCenteredOnUser = false
     @State private var selectedPOIAnimationID = UUID() // for smooth annotation update
+    @State private var showingFavorites = false // NEW: track favorites sheet
 
     var body: some View {
         ZStack(alignment: .top) {
             // Map in background
             Map(coordinateRegion: $region, annotationItems: viewModel.pois) { poi in
                 MapAnnotation(coordinate: poi.coordinate) {
-                    VStack {
-                        // Main pin button
-                        Button(action: {
-                            withAnimation(.spring(response: 0.5, dampingFraction: 0.75, blendDuration: 0.5)) {
-                                viewModel.selectedPOI = poi
-                                region.center = poi.coordinate
-                                region.span = MKCoordinateSpan(latitudeDelta: 0.03, longitudeDelta: 0.03)
-                            }
-                        }) {
-                            Image(systemName: viewModel.fetchFavorites().contains(where: { $0.id == poi.id }) ? "star.fill" : "mappin.circle.fill")
-                                .foregroundColor(viewModel.fetchFavorites().contains(where: { $0.id == poi.id }) ? .yellow : .blue)
-                                .font(.title)
-                                .scaleEffect(viewModel.selectedPOI?.id == poi.id ? 1.3 : 1.0)
-                                .animation(.easeInOut, value: viewModel.selectedPOI?.id)
+                    Button(action: {
+                        withAnimation(.spring(response: 0.5, dampingFraction: 0.75, blendDuration: 0.5)) {
+                            viewModel.selectedPOI = poi
+                            region.center = poi.coordinate
+                            region.span = MKCoordinateSpan(latitudeDelta: 0.03, longitudeDelta: 0.03)
                         }
-
-                        // Optional: small save button under pin
-                        if !viewModel.fetchFavorites().contains(where: { $0.id == poi.id }) {
-                            Button(action: { viewModel.saveFavorite(poi) }) {
-                                Image(systemName: "star")
-                                    .foregroundColor(.orange)
-                                    .padding(2)
-                            }
-                        }
+                    }) {
+                        Image(systemName: "mappin.circle.fill")
+                            .foregroundColor(.blue)
+                            .font(.title)
+                            .scaleEffect(viewModel.selectedPOI?.id == poi.id ? 1.3 : 1.0)
+                            .animation(.easeInOut, value: viewModel.selectedPOI?.id)
                     }
                 }
             }
@@ -70,15 +59,22 @@ struct MapView: View {
             .sheet(item: $viewModel.selectedPOI) { poi in
                 POIDetailView(poi: poi)
             }
-
+            
             // Controls overlay
             VStack(spacing: 10) {
                 HStack {
-                    TextField("Search places...", text: $searchQuery)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                        .submitLabel(.search)
-                        .onSubmit { performSearch() }
+                    // Favorites button
+                    Button(action: {
+                        showingFavorites = true
+                    }) {
+                        Image(systemName: "star.fill")
+                            .foregroundColor(.yellow)
+                            .font(.title2)
+                    }
 
+                    Spacer()
+
+                    // Close button
                     Button(action: {
                         print("Close tapped")
                     }) {
@@ -89,6 +85,13 @@ struct MapView: View {
                 }
                 .padding(.horizontal)
 
+                // Search field
+                TextField("Search places...", text: $searchQuery)
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .submitLabel(.search)
+                    .onSubmit { performSearch() }
+
+                // Suggestions list
                 if !viewModel.suggestions.isEmpty {
                     List(viewModel.suggestions, id: \.self) { suggestion in
                         Button(action: {
@@ -116,6 +119,10 @@ struct MapView: View {
                 Spacer()
             }
             .padding(.top, 50)
+        }
+        // NEW: Favorites sheet
+        .sheet(isPresented: $showingFavorites) {
+            FavoritesView(viewModel: viewModel)
         }
     }
 
