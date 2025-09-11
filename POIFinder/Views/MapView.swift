@@ -19,79 +19,72 @@ struct MapView: View {
     )
     
     @State private var hasCenteredOnUser = false
-    @State private var selectedPOIAnimationID = UUID() // for smooth annotation update
-    @State private var showingFavorites = false // NEW: track favorites sheet
+    @State private var showingFavorites = false
 
     var body: some View {
         ZStack(alignment: .top) {
-            // Map in background
-            Map(coordinateRegion: $region, annotationItems: viewModel.pois) { poi in
-                MapAnnotation(coordinate: poi.coordinate) {
-                    Button(action: {
-                        withAnimation(.spring(response: 0.5, dampingFraction: 0.75, blendDuration: 0.5)) {
-                            viewModel.selectedPOI = poi
-                            region.center = poi.coordinate
-                            region.span = MKCoordinateSpan(latitudeDelta: 0.03, longitudeDelta: 0.03)
-                        }
-                    }) {
+            // Map with merged annotations (POIs + optional user)
+            Map(coordinateRegion: $region, annotationItems: allAnnotations) { (annotation: POI) in
+                MapAnnotation(coordinate: annotation.coordinate) {
+                    // Distinguish user marker by id
+                    if annotation.id == userAnnotation?.id {
+                        // Red pin for user
                         Image(systemName: "mappin.circle.fill")
-                            .foregroundColor(.blue)
+                            .foregroundColor(.red)
                             .font(.title)
-                            .scaleEffect(viewModel.selectedPOI?.id == poi.id ? 1.3 : 1.0)
-                            .animation(.easeInOut, value: viewModel.selectedPOI?.id)
+                    } else {
+                        // Blue pin for POIs
+                        Button(action: {
+                            // Set selected POI and recenter
+                            viewModel.selectedPOI = annotation
+                            region.center = annotation.coordinate
+                            region.span = MKCoordinateSpan(latitudeDelta: 0.03, longitudeDelta: 0.03)
+                        }) {
+                            Image(systemName: "mappin.circle.fill")
+                                .foregroundColor(.blue)
+                                .font(.title)
+                                .scaleEffect(viewModel.selectedPOI?.id == annotation.id ? 1.3 : 1.0)
+                                .animation(.easeInOut, value: viewModel.selectedPOI?.id)
+                        }
                     }
                 }
             }
             .edgesIgnoringSafeArea(.all)
             .onReceive(locationManager.$userLocation) { newLocation in
                 guard let coord = newLocation, !hasCenteredOnUser else { return }
-                withAnimation(.easeInOut(duration: 1.0)) {
-                    region.center = coord
-                }
+                region.center = coord
                 hasCenteredOnUser = true
             }
             .onReceive(viewModel.$pois) { newPOIs in
                 guard !newPOIs.isEmpty else { return }
-                withAnimation(.easeInOut(duration: 0.8)) {
-                    region.center = newPOIs.first!.coordinate
-                }
+                region.center = newPOIs.first!.coordinate
             }
             .sheet(item: $viewModel.selectedPOI) { poi in
                 POIDetailView(poi: poi, viewModel: viewModel)
             }
 
-            
-            // Controls overlay
+            // Controls overlay (favorites, compass, close, search)
             VStack(spacing: 10) {
                 HStack {
-                    // Favorites button
-                    Button(action: {
-                        showingFavorites = true
-                    }) {
+                    Button(action: { showingFavorites = true }) {
                         Image(systemName: "star.fill")
                             .foregroundColor(.yellow)
                             .font(.title2)
                     }
-                    
-                    //Redirect ICon To Aid users Return Back To Locatoin
+
                     Button(action: {
-                               guard let userCoord = locationManager.userLocation else { return }
-                               withAnimation(.easeInOut(duration: 0.8)) {
-                                   region.center = userCoord
-                                   region.span = MKCoordinateSpan(latitudeDelta: 0.03, longitudeDelta: 0.03)
-                               }
-                           }) {
-                               Image(systemName: "location.north.circle.fill")
-                                   .font(.title2)
-                                   .foregroundColor(.blue)
-                           }
+                        guard let userCoord = locationManager.userLocation else { return }
+                        region.center = userCoord
+                        region.span = MKCoordinateSpan(latitudeDelta: 0.03, longitudeDelta: 0.03)
+                    }) {
+                        Image(systemName: "location.north.circle.fill")
+                            .font(.title2)
+                            .foregroundColor(.blue)
+                    }
 
                     Spacer()
 
-                    // Close button
-                    Button(action: {
-                        print("Close tapped")
-                    }) {
+                    Button(action: { print("Close tapped") }) {
                         Image(systemName: "xmark.circle.fill")
                             .font(.title2)
                             .foregroundColor(.red)
@@ -99,13 +92,11 @@ struct MapView: View {
                 }
                 .padding(.horizontal)
 
-                // Search field
                 TextField("Search places...", text: $searchQuery)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .submitLabel(.search)
                     .onSubmit { performSearch() }
 
-                // Suggestions list
                 if !viewModel.suggestions.isEmpty {
                     List(viewModel.suggestions, id: \.self) { suggestion in
                         Button(action: {
@@ -134,9 +125,32 @@ struct MapView: View {
             }
             .padding(.top, 50)
         }
-        // NEW: Favorites sheet
         .sheet(isPresented: $showingFavorites) {
             FavoritesView(viewModel: viewModel)
+        }
+    }
+
+    // MARK: - Helpers
+
+    // Create a "user" POI if user location exists (so it merges cleanly with POIs)
+    private var userAnnotation: POI? {
+        guard let coord = locationManager.userLocation else { return nil }
+        return POI(
+            name: "You",
+            category: "User",             // placeholder for required field
+            address: "Current Location",  // placeholder for required field
+            coordinate: coord
+        )
+    }
+
+    // Merge POIs from the view model with the optional user annotation.
+    // Keep the POIs first so selecting shows them correctly.
+    private var allAnnotations: [POI] {
+        if let user = userAnnotation {
+            // put user at the end to avoid accidental equality with real POIs
+            return viewModel.pois + [user]
+        } else {
+            return viewModel.pois
         }
     }
 
