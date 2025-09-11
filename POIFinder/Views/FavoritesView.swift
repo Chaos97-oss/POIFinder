@@ -12,21 +12,54 @@ struct FavoritesView: View {
     @ObservedObject var viewModel: MapViewModel
 
     var body: some View {
-        NavigationView {
-            List(viewModel.fetchFavorites()) { poi in
-                Button(action: {
-                    viewModel.selectedPOI = poi
-                }) {
-                    VStack(alignment: .leading) {
-                        Text(poi.name).bold()
-                        Text(poi.address).font(.subheadline).foregroundColor(.gray)
+        VStack(alignment: .leading) {
+            // Bold header with star
+            HStack {
+                Image(systemName: "star.fill")
+                    .foregroundColor(.yellow)
+                Text("Favorites")
+                    .font(.title2)
+                    .bold()
+            }
+            .padding(.horizontal)
+            .padding(.top, 10) // small top padding
+
+            Divider()
+
+            if viewModel.favorites.isEmpty {
+                // Center placeholder only vertically within remaining space
+                VStack {
+                    Spacer()
+                    Text("No Favorites yet")
+                        .foregroundColor(.gray)
+                        .italic()
+                    Spacer()
+                }
+                .frame(maxWidth: .infinity)
+            } else {
+                List {
+                    ForEach(viewModel.favorites) { poi in
+                        HStack {
+                            VStack(alignment: .leading) {
+                                Text(poi.name).bold()
+                                Text(poi.address)
+                                    .font(.subheadline)
+                                    .foregroundColor(.gray)
+                            }
+
+                            Spacer()
+
+                            Button(action: {
+                                viewModel.deleteFavorite(poi)
+                            }) {
+                                Image(systemName: "trash")
+                                    .foregroundColor(.red)
+                            }
+                        }
                     }
                 }
             }
-            .navigationTitle("Favorites & History")
-            .sheet(item: $viewModel.selectedPOI) { poi in
-                POIDetailView(poi: poi)
-            }
         }
+        .navigationBarTitleDisplayMode(.inline)
     }
 }

@@ -57,7 +57,7 @@ struct MapView: View {
                 }
             }
             .sheet(item: $viewModel.selectedPOI) { poi in
-                POIDetailView(poi: poi)
+                POIDetailView(poi: poi, viewModel: viewModel)
             }
             
             // Controls overlay

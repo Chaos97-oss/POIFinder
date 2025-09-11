@@ -10,22 +10,36 @@ import SwiftUI
 
 struct POIDetailView: View {
     let poi: POI
+    @ObservedObject var viewModel: MapViewModel
 
     var body: some View {
-        VStack(spacing: 16) {
+        VStack(alignment: .leading, spacing: 20) {
             Text(poi.name)
                 .font(.title)
-                .fontWeight(.bold)
+                .bold()
 
             Text(poi.category)
-                .font(.headline)
-                .foregroundColor(.secondary)
+                .font(.subheadline)
+                .foregroundColor(.gray)
 
             Text(poi.address)
                 .font(.body)
-                .multilineTextAlignment(.center)
 
             Spacer()
+
+            Button(action: {
+                viewModel.saveFavorite(poi)
+            }) {
+                HStack {
+                    Image(systemName: "star.fill")
+                    Text("Add to Favorites")
+                }
+                .padding()
+                .frame(maxWidth: .infinity)
+                .background(Color.yellow)
+                .foregroundColor(.black)
+                .cornerRadius(10)
+            }
         }
         .padding()
     }

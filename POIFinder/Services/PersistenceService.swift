@@ -10,12 +10,11 @@ import CoreData
 import CoreLocation
 
 class PersistenceService {
-    static let shared = PersistenceService()   // Singleton approach 
+    static let shared = PersistenceService()
     private init() {}
 
-    // Reference to CoreData container
     lazy var persistentContainer: NSPersistentContainer = {
-        let container = NSPersistentContainer(name: "POIFinder") // Match your .xcdatamodeld file
+        let container = NSPersistentContainer(name: "POIFinder")
         container.loadPersistentStores { _, error in
             if let error = error {
                 fatalError("CoreData failed to load: \(error)")
@@ -28,7 +27,7 @@ class PersistenceService {
         persistentContainer.viewContext
     }
 
-    // Save POI
+    // MARK: - Save POI
     func save(poi: POI) {
         let entity = NSEntityDescription.entity(forEntityName: "FavoritePOI", in: context)!
         let favorite = NSManagedObject(entity: entity, insertInto: context)
@@ -46,7 +45,7 @@ class PersistenceService {
         }
     }
 
-    // Fetch Favorites
+    // MARK: - Fetch Favorites
     func fetchFavorites() -> [POI] {
         let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "FavoritePOI")
         do {
@@ -70,6 +69,23 @@ class PersistenceService {
         } catch {
             print("Failed to fetch favorites: \(error)")
             return []
+        }
+    }
+
+    // MARK: - Delete POI
+    func delete(poi: POI) {
+        let context = context
+        let request: NSFetchRequest<NSManagedObject> = NSFetchRequest(entityName: "FavoritePOI")
+        request.predicate = NSPredicate(format: "name == %@", poi.name) 
+
+        do {
+            if let objectToDelete = try context.fetch(request).first {
+                context.delete(objectToDelete)
+                try context.save()
+                print("Deleted POI:", poi.name)
+            }
+        } catch {
+            print("Failed to delete favorite:", error)
         }
     }
 }
