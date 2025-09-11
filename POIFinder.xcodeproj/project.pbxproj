@@ -16,6 +16,15 @@
 		044316D52E7249F700B06BA7 /* POIFinderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 044316D42E7249F700B06BA7 /* POIFinderTests.swift */; };
 		044316DF2E7249F800B06BA7 /* POIFinderUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 044316DE2E7249F800B06BA7 /* POIFinderUITests.swift */; };
 		044316E12E7249F800B06BA7 /* POIFinderUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 044316E02E7249F800B06BA7 /* POIFinderUITestsLaunchTests.swift */; };
+		04A3E3302E7258F900D001DA /* POI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04A3E32F2E7258F900D001DA /* POI.swift */; };
+		04A3E3322E72595700D001DA /* MapViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04A3E3312E72595700D001DA /* MapViewModel.swift */; };
+		04A3E3342E72598800D001DA /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04A3E3332E72598800D001DA /* LocationManager.swift */; };
+		04A3E3362E7259A300D001DA /* POISearchService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04A3E3352E7259A300D001DA /* POISearchService.swift */; };
+		04A3E3382E7259B500D001DA /* PersistenceService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04A3E3372E7259B500D001DA /* PersistenceService.swift */; };
+		04A3E33A2E725A0400D001DA /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04A3E3392E725A0400D001DA /* MapView.swift */; };
+		04A3E33C2E725A1A00D001DA /* POIDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04A3E33B2E725A1A00D001DA /* POIDetailView.swift */; };
+		04A3E33E2E725A2D00D001DA /* FavoritesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04A3E33D2E725A2D00D001DA /* FavoritesView.swift */; };
+		04A3E3402E72632F00D001DA /* SearchCompleterService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04A3E33F2E72632F00D001DA /* SearchCompleterService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -48,6 +57,16 @@
 		044316DA2E7249F800B06BA7 /* POIFinderUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = POIFinderUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		044316DE2E7249F800B06BA7 /* POIFinderUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = POIFinderUITests.swift; sourceTree = "<group>"; };
 		044316E02E7249F800B06BA7 /* POIFinderUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = POIFinderUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		044316ED2E724BD100B06BA7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		04A3E32F2E7258F900D001DA /* POI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = POI.swift; sourceTree = "<group>"; };
+		04A3E3312E72595700D001DA /* MapViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewModel.swift; sourceTree = "<group>"; };
+		04A3E3332E72598800D001DA /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
+		04A3E3352E7259A300D001DA /* POISearchService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = POISearchService.swift; sourceTree = "<group>"; };
+		04A3E3372E7259B500D001DA /* PersistenceService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceService.swift; sourceTree = "<group>"; };
+		04A3E3392E725A0400D001DA /* MapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
+		04A3E33B2E725A1A00D001DA /* POIDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = POIDetailView.swift; sourceTree = "<group>"; };
+		04A3E33D2E725A2D00D001DA /* FavoritesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesView.swift; sourceTree = "<group>"; };
+		04A3E33F2E72632F00D001DA /* SearchCompleterService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchCompleterService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -98,6 +117,11 @@
 		044316BD2E7249F500B06BA7 /* POIFinder */ = {
 			isa = PBXGroup;
 			children = (
+				04A3E32E2E72587900D001DA /* Views */,
+				04A3E32D2E72586B00D001DA /* Services */,
+				04A3E32C2E72584800D001DA /* ViewModels */,
+				04A3E32B2E72583300D001DA /* Models */,
+				044316ED2E724BD100B06BA7 /* Info.plist */,
 				044316BE2E7249F500B06BA7 /* POIFinderApp.swift */,
 				044316C02E7249F500B06BA7 /* ContentView.swift */,
 				044316C22E7249F700B06BA7 /* Assets.xcassets */,
@@ -131,6 +155,43 @@
 				044316E02E7249F800B06BA7 /* POIFinderUITestsLaunchTests.swift */,
 			);
 			path = POIFinderUITests;
+			sourceTree = "<group>";
+		};
+		04A3E32B2E72583300D001DA /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				04A3E32F2E7258F900D001DA /* POI.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		04A3E32C2E72584800D001DA /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				04A3E3312E72595700D001DA /* MapViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		04A3E32D2E72586B00D001DA /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				04A3E3332E72598800D001DA /* LocationManager.swift */,
+				04A3E3352E7259A300D001DA /* POISearchService.swift */,
+				04A3E3372E7259B500D001DA /* PersistenceService.swift */,
+				04A3E33F2E72632F00D001DA /* SearchCompleterService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		04A3E32E2E72587900D001DA /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				04A3E3392E725A0400D001DA /* MapView.swift */,
+				04A3E33B2E725A1A00D001DA /* POIDetailView.swift */,
+				04A3E33D2E725A2D00D001DA /* FavoritesView.swift */,
+			);
+			path = Views;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -263,10 +324,19 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				04A3E3362E7259A300D001DA /* POISearchService.swift in Sources */,
 				044316C82E7249F700B06BA7 /* Persistence.swift in Sources */,
+				04A3E3302E7258F900D001DA /* POI.swift in Sources */,
 				044316C12E7249F500B06BA7 /* ContentView.swift in Sources */,
+				04A3E3402E72632F00D001DA /* SearchCompleterService.swift in Sources */,
+				04A3E33C2E725A1A00D001DA /* POIDetailView.swift in Sources */,
+				04A3E3342E72598800D001DA /* LocationManager.swift in Sources */,
 				044316CB2E7249F700B06BA7 /* POIFinder.xcdatamodeld in Sources */,
 				044316BF2E7249F500B06BA7 /* POIFinderApp.swift in Sources */,
+				04A3E33E2E725A2D00D001DA /* FavoritesView.swift in Sources */,
+				04A3E33A2E725A0400D001DA /* MapView.swift in Sources */,
+				04A3E3382E7259B500D001DA /* PersistenceService.swift in Sources */,
+				04A3E3322E72595700D001DA /* MapViewModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -428,6 +498,8 @@
 				DEVELOPMENT_TEAM = FV55T32P8M;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = POIFinder/Info.plist;
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "This app needs your location to find nearby places.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -457,6 +529,8 @@
 				DEVELOPMENT_TEAM = FV55T32P8M;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = POIFinder/Info.plist;
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "This app needs your location to find nearby places.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
