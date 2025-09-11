@@ -25,7 +25,6 @@
 		04A3E33C2E725A1A00D001DA /* POIDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04A3E33B2E725A1A00D001DA /* POIDetailView.swift */; };
 		04A3E33E2E725A2D00D001DA /* FavoritesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04A3E33D2E725A2D00D001DA /* FavoritesView.swift */; };
 		04A3E3402E72632F00D001DA /* SearchCompleterService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04A3E33F2E72632F00D001DA /* SearchCompleterService.swift */; };
-		04A3E3492E728AE300D001DA /* POIModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 04A3E3472E728AE300D001DA /* POIModel.xcdatamodeld */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -68,7 +67,6 @@
 		04A3E33B2E725A1A00D001DA /* POIDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = POIDetailView.swift; sourceTree = "<group>"; };
 		04A3E33D2E725A2D00D001DA /* FavoritesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesView.swift; sourceTree = "<group>"; };
 		04A3E33F2E72632F00D001DA /* SearchCompleterService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchCompleterService.swift; sourceTree = "<group>"; };
-		04A3E3482E728AE300D001DA /* POIModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = POIModel.xcdatamodel; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -130,7 +128,6 @@
 				044316C72E7249F700B06BA7 /* Persistence.swift */,
 				044316C92E7249F700B06BA7 /* POIFinder.xcdatamodeld */,
 				044316C42E7249F700B06BA7 /* Preview Content */,
-				04A3E3472E728AE300D001DA /* POIModel.xcdatamodeld */,
 			);
 			path = POIFinder;
 			sourceTree = "<group>";
@@ -331,7 +328,6 @@
 				044316C82E7249F700B06BA7 /* Persistence.swift in Sources */,
 				04A3E3302E7258F900D001DA /* POI.swift in Sources */,
 				044316C12E7249F500B06BA7 /* ContentView.swift in Sources */,
-				04A3E3492E728AE300D001DA /* POIModel.xcdatamodeld in Sources */,
 				04A3E3402E72632F00D001DA /* SearchCompleterService.swift in Sources */,
 				04A3E33C2E725A1A00D001DA /* POIDetailView.swift in Sources */,
 				04A3E3342E72598800D001DA /* LocationManager.swift in Sources */,
@@ -678,16 +674,6 @@
 			);
 			currentVersion = 044316CA2E7249F700B06BA7 /* POIFinder.xcdatamodel */;
 			path = POIFinder.xcdatamodeld;
-			sourceTree = "<group>";
-			versionGroupType = wrapper.xcdatamodel;
-		};
-		04A3E3472E728AE300D001DA /* POIModel.xcdatamodeld */ = {
-			isa = XCVersionGroup;
-			children = (
-				04A3E3482E728AE300D001DA /* POIModel.xcdatamodel */,
-			);
-			currentVersion = 04A3E3482E728AE300D001DA /* POIModel.xcdatamodel */;
-			path = POIModel.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
 		};

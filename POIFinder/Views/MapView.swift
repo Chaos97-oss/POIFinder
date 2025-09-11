@@ -26,18 +26,30 @@ struct MapView: View {
             // Map in background
             Map(coordinateRegion: $region, annotationItems: viewModel.pois) { poi in
                 MapAnnotation(coordinate: poi.coordinate) {
-                    Button(action: {
-                        withAnimation(.spring(response: 0.5, dampingFraction: 0.75, blendDuration: 0.5)) {
-                            viewModel.selectedPOI = poi
-                            region.center = poi.coordinate
-                            region.span = MKCoordinateSpan(latitudeDelta: 0.03, longitudeDelta: 0.03)
+                    VStack {
+                        // Main pin button
+                        Button(action: {
+                            withAnimation(.spring(response: 0.5, dampingFraction: 0.75, blendDuration: 0.5)) {
+                                viewModel.selectedPOI = poi
+                                region.center = poi.coordinate
+                                region.span = MKCoordinateSpan(latitudeDelta: 0.03, longitudeDelta: 0.03)
+                            }
+                        }) {
+                            Image(systemName: viewModel.fetchFavorites().contains(where: { $0.id == poi.id }) ? "star.fill" : "mappin.circle.fill")
+                                .foregroundColor(viewModel.fetchFavorites().contains(where: { $0.id == poi.id }) ? .yellow : .blue)
+                                .font(.title)
+                                .scaleEffect(viewModel.selectedPOI?.id == poi.id ? 1.3 : 1.0)
+                                .animation(.easeInOut, value: viewModel.selectedPOI?.id)
                         }
-                    }) {
-                        Image(systemName: "mappin.circle.fill")
-                            .foregroundColor(.blue)
-                            .font(.title)
-                            .scaleEffect(viewModel.selectedPOI?.id == poi.id ? 1.3 : 1.0)
-                            .animation(.easeInOut, value: viewModel.selectedPOI?.id)
+
+                        // Optional: small save button under pin
+                        if !viewModel.fetchFavorites().contains(where: { $0.id == poi.id }) {
+                            Button(action: { viewModel.saveFavorite(poi) }) {
+                                Image(systemName: "star")
+                                    .foregroundColor(.orange)
+                                    .padding(2)
+                            }
+                        }
                     }
                 }
             }
