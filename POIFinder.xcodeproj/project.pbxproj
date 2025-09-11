@@ -1,0 +1,609 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		044316BF2E7249F500B06BA7 /* POIFinderApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 044316BE2E7249F500B06BA7 /* POIFinderApp.swift */; };
+		044316C12E7249F500B06BA7 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 044316C02E7249F500B06BA7 /* ContentView.swift */; };
+		044316C32E7249F700B06BA7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 044316C22E7249F700B06BA7 /* Assets.xcassets */; };
+		044316C62E7249F700B06BA7 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 044316C52E7249F700B06BA7 /* Preview Assets.xcassets */; };
+		044316C82E7249F700B06BA7 /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 044316C72E7249F700B06BA7 /* Persistence.swift */; };
+		044316CB2E7249F700B06BA7 /* POIFinder.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 044316C92E7249F700B06BA7 /* POIFinder.xcdatamodeld */; };
+		044316D52E7249F700B06BA7 /* POIFinderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 044316D42E7249F700B06BA7 /* POIFinderTests.swift */; };
+		044316DF2E7249F800B06BA7 /* POIFinderUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 044316DE2E7249F800B06BA7 /* POIFinderUITests.swift */; };
+		044316E12E7249F800B06BA7 /* POIFinderUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 044316E02E7249F800B06BA7 /* POIFinderUITestsLaunchTests.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		044316D12E7249F700B06BA7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 044316B32E7249F500B06BA7 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 044316BA2E7249F500B06BA7;
+			remoteInfo = POIFinder;
+		};
+		044316DB2E7249F800B06BA7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 044316B32E7249F500B06BA7 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 044316BA2E7249F500B06BA7;
+			remoteInfo = POIFinder;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		044316BB2E7249F500B06BA7 /* POIFinder.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = POIFinder.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		044316BE2E7249F500B06BA7 /* POIFinderApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = POIFinderApp.swift; sourceTree = "<group>"; };
+		044316C02E7249F500B06BA7 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		044316C22E7249F700B06BA7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		044316C52E7249F700B06BA7 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		044316C72E7249F700B06BA7 /* Persistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence.swift; sourceTree = "<group>"; };
+		044316CA2E7249F700B06BA7 /* POIFinder.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = POIFinder.xcdatamodel; sourceTree = "<group>"; };
+		044316D02E7249F700B06BA7 /* POIFinderTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = POIFinderTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		044316D42E7249F700B06BA7 /* POIFinderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = POIFinderTests.swift; sourceTree = "<group>"; };
+		044316DA2E7249F800B06BA7 /* POIFinderUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = POIFinderUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		044316DE2E7249F800B06BA7 /* POIFinderUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = POIFinderUITests.swift; sourceTree = "<group>"; };
+		044316E02E7249F800B06BA7 /* POIFinderUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = POIFinderUITestsLaunchTests.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		044316B82E7249F500B06BA7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		044316CD2E7249F700B06BA7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		044316D72E7249F800B06BA7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		044316B22E7249F500B06BA7 = {
+			isa = PBXGroup;
+			children = (
+				044316BD2E7249F500B06BA7 /* POIFinder */,
+				044316D32E7249F700B06BA7 /* POIFinderTests */,
+				044316DD2E7249F800B06BA7 /* POIFinderUITests */,
+				044316BC2E7249F500B06BA7 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		044316BC2E7249F500B06BA7 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				044316BB2E7249F500B06BA7 /* POIFinder.app */,
+				044316D02E7249F700B06BA7 /* POIFinderTests.xctest */,
+				044316DA2E7249F800B06BA7 /* POIFinderUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		044316BD2E7249F500B06BA7 /* POIFinder */ = {
+			isa = PBXGroup;
+			children = (
+				044316BE2E7249F500B06BA7 /* POIFinderApp.swift */,
+				044316C02E7249F500B06BA7 /* ContentView.swift */,
+				044316C22E7249F700B06BA7 /* Assets.xcassets */,
+				044316C72E7249F700B06BA7 /* Persistence.swift */,
+				044316C92E7249F700B06BA7 /* POIFinder.xcdatamodeld */,
+				044316C42E7249F700B06BA7 /* Preview Content */,
+			);
+			path = POIFinder;
+			sourceTree = "<group>";
+		};
+		044316C42E7249F700B06BA7 /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				044316C52E7249F700B06BA7 /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		044316D32E7249F700B06BA7 /* POIFinderTests */ = {
+			isa = PBXGroup;
+			children = (
+				044316D42E7249F700B06BA7 /* POIFinderTests.swift */,
+			);
+			path = POIFinderTests;
+			sourceTree = "<group>";
+		};
+		044316DD2E7249F800B06BA7 /* POIFinderUITests */ = {
+			isa = PBXGroup;
+			children = (
+				044316DE2E7249F800B06BA7 /* POIFinderUITests.swift */,
+				044316E02E7249F800B06BA7 /* POIFinderUITestsLaunchTests.swift */,
+			);
+			path = POIFinderUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		044316BA2E7249F500B06BA7 /* POIFinder */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 044316E42E7249F800B06BA7 /* Build configuration list for PBXNativeTarget "POIFinder" */;
+			buildPhases = (
+				044316B72E7249F500B06BA7 /* Sources */,
+				044316B82E7249F500B06BA7 /* Frameworks */,
+				044316B92E7249F500B06BA7 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = POIFinder;
+			productName = POIFinder;
+			productReference = 044316BB2E7249F500B06BA7 /* POIFinder.app */;
+			productType = "com.apple.product-type.application";
+		};
+		044316CF2E7249F700B06BA7 /* POIFinderTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 044316E72E7249F800B06BA7 /* Build configuration list for PBXNativeTarget "POIFinderTests" */;
+			buildPhases = (
+				044316CC2E7249F700B06BA7 /* Sources */,
+				044316CD2E7249F700B06BA7 /* Frameworks */,
+				044316CE2E7249F700B06BA7 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				044316D22E7249F700B06BA7 /* PBXTargetDependency */,
+			);
+			name = POIFinderTests;
+			productName = POIFinderTests;
+			productReference = 044316D02E7249F700B06BA7 /* POIFinderTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		044316D92E7249F800B06BA7 /* POIFinderUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 044316EA2E7249F800B06BA7 /* Build configuration list for PBXNativeTarget "POIFinderUITests" */;
+			buildPhases = (
+				044316D62E7249F800B06BA7 /* Sources */,
+				044316D72E7249F800B06BA7 /* Frameworks */,
+				044316D82E7249F800B06BA7 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				044316DC2E7249F800B06BA7 /* PBXTargetDependency */,
+			);
+			name = POIFinderUITests;
+			productName = POIFinderUITests;
+			productReference = 044316DA2E7249F800B06BA7 /* POIFinderUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		044316B32E7249F500B06BA7 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1420;
+				LastUpgradeCheck = 1420;
+				TargetAttributes = {
+					044316BA2E7249F500B06BA7 = {
+						CreatedOnToolsVersion = 14.2;
+					};
+					044316CF2E7249F700B06BA7 = {
+						CreatedOnToolsVersion = 14.2;
+						TestTargetID = 044316BA2E7249F500B06BA7;
+					};
+					044316D92E7249F800B06BA7 = {
+						CreatedOnToolsVersion = 14.2;
+						TestTargetID = 044316BA2E7249F500B06BA7;
+					};
+				};
+			};
+			buildConfigurationList = 044316B62E7249F500B06BA7 /* Build configuration list for PBXProject "POIFinder" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 044316B22E7249F500B06BA7;
+			productRefGroup = 044316BC2E7249F500B06BA7 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				044316BA2E7249F500B06BA7 /* POIFinder */,
+				044316CF2E7249F700B06BA7 /* POIFinderTests */,
+				044316D92E7249F800B06BA7 /* POIFinderUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		044316B92E7249F500B06BA7 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				044316C62E7249F700B06BA7 /* Preview Assets.xcassets in Resources */,
+				044316C32E7249F700B06BA7 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		044316CE2E7249F700B06BA7 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		044316D82E7249F800B06BA7 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		044316B72E7249F500B06BA7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				044316C82E7249F700B06BA7 /* Persistence.swift in Sources */,
+				044316C12E7249F500B06BA7 /* ContentView.swift in Sources */,
+				044316CB2E7249F700B06BA7 /* POIFinder.xcdatamodeld in Sources */,
+				044316BF2E7249F500B06BA7 /* POIFinderApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		044316CC2E7249F700B06BA7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				044316D52E7249F700B06BA7 /* POIFinderTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		044316D62E7249F800B06BA7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				044316DF2E7249F800B06BA7 /* POIFinderUITests.swift in Sources */,
+				044316E12E7249F800B06BA7 /* POIFinderUITestsLaunchTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		044316D22E7249F700B06BA7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 044316BA2E7249F500B06BA7 /* POIFinder */;
+			targetProxy = 044316D12E7249F700B06BA7 /* PBXContainerItemProxy */;
+		};
+		044316DC2E7249F800B06BA7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 044316BA2E7249F500B06BA7 /* POIFinder */;
+			targetProxy = 044316DB2E7249F800B06BA7 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		044316E22E7249F800B06BA7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		044316E32E7249F800B06BA7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		044316E52E7249F800B06BA7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"POIFinder/Preview Content\"";
+				DEVELOPMENT_TEAM = FV55T32P8M;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.chaos.POIFinder;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		044316E62E7249F800B06BA7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"POIFinder/Preview Content\"";
+				DEVELOPMENT_TEAM = FV55T32P8M;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.chaos.POIFinder;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		044316E82E7249F800B06BA7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = FV55T32P8M;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.chaos.POIFinderTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/POIFinder.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/POIFinder";
+			};
+			name = Debug;
+		};
+		044316E92E7249F800B06BA7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = FV55T32P8M;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.chaos.POIFinderTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/POIFinder.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/POIFinder";
+			};
+			name = Release;
+		};
+		044316EB2E7249F800B06BA7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = FV55T32P8M;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.chaos.POIFinderUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = POIFinder;
+			};
+			name = Debug;
+		};
+		044316EC2E7249F800B06BA7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = FV55T32P8M;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.chaos.POIFinderUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = POIFinder;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		044316B62E7249F500B06BA7 /* Build configuration list for PBXProject "POIFinder" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				044316E22E7249F800B06BA7 /* Debug */,
+				044316E32E7249F800B06BA7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		044316E42E7249F800B06BA7 /* Build configuration list for PBXNativeTarget "POIFinder" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				044316E52E7249F800B06BA7 /* Debug */,
+				044316E62E7249F800B06BA7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		044316E72E7249F800B06BA7 /* Build configuration list for PBXNativeTarget "POIFinderTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				044316E82E7249F800B06BA7 /* Debug */,
+				044316E92E7249F800B06BA7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		044316EA2E7249F800B06BA7 /* Build configuration list for PBXNativeTarget "POIFinderUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				044316EB2E7249F800B06BA7 /* Debug */,
+				044316EC2E7249F800B06BA7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		044316C92E7249F700B06BA7 /* POIFinder.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				044316CA2E7249F700B06BA7 /* POIFinder.xcdatamodel */,
+			);
+			currentVersion = 044316CA2E7249F700B06BA7 /* POIFinder.xcdatamodel */;
+			path = POIFinder.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
+	};
+	rootObject = 044316B32E7249F500B06BA7 /* Project object */;
+}
