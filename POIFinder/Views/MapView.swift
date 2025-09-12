@@ -58,7 +58,9 @@ struct MapView: View {
                 guard !newPOIs.isEmpty else { return }
                 region.center = newPOIs.first!.coordinate
             }
-            .sheet(item: $viewModel.selectedPOI) { poi in
+            .sheet(item: $viewModel.selectedPOI, onDismiss: {
+                viewModel.selectedPOI = nil
+            }) { poi in
                 POIDetailView(poi: poi, viewModel: viewModel)
             }
 

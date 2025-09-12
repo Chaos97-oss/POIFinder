@@ -10,10 +10,10 @@ import SwiftUI
 
 struct FavoritesView: View {
     @ObservedObject var viewModel: MapViewModel
+    @Environment(\.dismiss) private var dismiss
 
     var body: some View {
         VStack(alignment: .leading) {
-            // Bold header with star
             HStack {
                 Image(systemName: "star.fill")
                     .foregroundColor(.yellow)
@@ -22,12 +22,11 @@ struct FavoritesView: View {
                     .bold()
             }
             .padding(.horizontal)
-            .padding(.top, 10) // small top padding
+            .padding(.top, 10)
 
             Divider()
 
             if viewModel.favorites.isEmpty {
-                // Center placeholder only vertically within remaining space
                 VStack {
                     Spacer()
                     Text("No Favorites yet")
@@ -54,6 +53,16 @@ struct FavoritesView: View {
                             }) {
                                 Image(systemName: "trash")
                                     .foregroundColor(.red)
+                            }
+                            .buttonStyle(BorderlessButtonStyle()) // prevents row tap conflict
+                        }
+                        .contentShape(Rectangle()) // make whole row tappable
+                        .onTapGesture {
+                            // Close the favorites sheet
+                            dismiss()
+                            // Defer publishing the selection to avoid updating state during view updates
+                            DispatchQueue.main.async {
+                                viewModel.selectedPOI = poi
                             }
                         }
                     }
