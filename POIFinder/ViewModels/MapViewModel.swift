@@ -16,7 +16,7 @@ class MapViewModel: ObservableObject {
     @Published var favorites: [POI] = []
     @Published var errorMessage: String?
     
-    // 👇 New: Track the visible map region
+    //  New: Track the visible map region
     @Published var region: MKCoordinateRegion = MKCoordinateRegion(
         center: CLLocationCoordinate2D(latitude: 6.5244, longitude: 3.3792), // default Lagos, Nigeria
         span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)

@@ -11,9 +11,10 @@ import SwiftUI
 struct FavoritesView: View {
     @ObservedObject var viewModel: MapViewModel
     @Environment(\.dismiss) var dismiss
+
     var body: some View {
         VStack(alignment: .leading) {
-            // Bold header with star
+            // Header
             HStack {
                 Image(systemName: "star.fill")
                     .foregroundColor(.yellow)
@@ -48,21 +49,29 @@ struct FavoritesView: View {
 
                             Spacer()
 
+                            // Navigate button
+                            Button(action: {
+                                // Only navigate, no delete
+                                viewModel.selectedPOI = poi
+                                viewModel.centerOn(poi)
+                                dismiss()
+                            }) {
+                                Image(systemName: "arrow.up.right.circle.fill")
+                                    .foregroundColor(.blue)
+                                    .font(.title2)
+                            }
+                            .buttonStyle(BorderlessButtonStyle())
+                            // Delete button
                             Button(action: {
                                 viewModel.deleteFavorite(poi)
                             }) {
                                 Image(systemName: "trash")
                                     .foregroundColor(.red)
+                                    .font(.title2)
                             }
                             .buttonStyle(BorderlessButtonStyle())
                         }
-                        .contentShape(Rectangle()) // Makes entire row tappable
-                        .onTapGesture {
-                            // 👇 move map & show details
-                            viewModel.centerOn(poi)
-                            viewModel.selectedPOI = poi
-                            dismiss()
-                        }
+                        .padding(.vertical, 5)
                     }
                 }
             }
