@@ -14,7 +14,13 @@ class MapViewModel: ObservableObject {
     @Published var selectedPOI: POI?
     @Published var suggestions: [MKLocalSearchCompletion] = []
     @Published var favorites: [POI] = []
-    @Published var errorMessage: String?   
+    @Published var errorMessage: String?
+    
+    // 👇 New: Track the visible map region
+    @Published var region: MKCoordinateRegion = MKCoordinateRegion(
+        center: CLLocationCoordinate2D(latitude: 6.5244, longitude: 3.3792), // default Lagos, Nigeria
+        span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
+    )
 
     private let searchService = POISearchService()
     private let completerService = SearchCompleterService()
@@ -26,7 +32,6 @@ class MapViewModel: ObservableObject {
             .assign(to: \.suggestions, on: self)
             .store(in: &cancellables)
 
-        // Listen for completer errors if service publishes them
         completerService.$errorMessage
             .receive(on: DispatchQueue.main)
             .sink { [weak self] msg in
@@ -74,5 +79,16 @@ class MapViewModel: ObservableObject {
 
     func updateSearchQuery(_ query: String) {
         completerService.updateQuery(query)
+    }
+
+    // 👇 New: Re-center map on a favorite or POI
+    func centerOn(_ poi: POI) {
+        let newRegion = MKCoordinateRegion(
+            center: poi.coordinate,
+            span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
+        )
+        DispatchQueue.main.async {
+            self.region = newRegion
+        }
     }
 }

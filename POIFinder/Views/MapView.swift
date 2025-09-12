@@ -13,20 +13,14 @@ struct MapView: View {
     @StateObject private var locationManager = LocationManager()
     @State private var searchQuery: String = ""
     
-    @State private var region = MKCoordinateRegion(
-        center: CLLocationCoordinate2D(latitude: 0, longitude: 0),
-        span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
-    )
-    
     @State private var hasCenteredOnUser = false
     @State private var showingFavorites = false
 
     var body: some View {
         ZStack(alignment: .top) {
             // Map with merged annotations (POIs + optional user)
-            Map(coordinateRegion: $region, annotationItems: allAnnotations) { (annotation: POI) in
+            Map(coordinateRegion: $viewModel.region, annotationItems: allAnnotations) { (annotation: POI) in
                 MapAnnotation(coordinate: annotation.coordinate) {
-                    // Distinguish user marker by id
                     if annotation.category == "User" {
                         // Red pin for user
                         Image(systemName: "mappin.circle.fill")
@@ -36,8 +30,7 @@ struct MapView: View {
                         // Blue pin for POIs
                         Button(action: {
                             viewModel.selectedPOI = annotation
-                            region.center = annotation.coordinate
-                            region.span = MKCoordinateSpan(latitudeDelta: 0.03, longitudeDelta: 0.03)
+                            viewModel.centerOn(annotation)   // 👈 smooth animation
                         }) {
                             Image(systemName: "mappin.circle.fill")
                                 .foregroundColor(.blue)
@@ -51,12 +44,14 @@ struct MapView: View {
             .edgesIgnoringSafeArea(.all)
             .onReceive(locationManager.$userLocation) { newLocation in
                 guard let coord = newLocation, !hasCenteredOnUser else { return }
-                region.center = coord
+                withAnimation {
+                    viewModel.region.center = coord
+                }
                 hasCenteredOnUser = true
             }
             .onReceive(viewModel.$pois) { newPOIs in
-                guard !newPOIs.isEmpty else { return }
-                region.center = newPOIs.first!.coordinate
+                guard let first = newPOIs.first else { return }
+                viewModel.centerOn(first)
             }
             .sheet(item: $viewModel.selectedPOI, onDismiss: {
                 viewModel.selectedPOI = nil
@@ -75,8 +70,13 @@ struct MapView: View {
 
                     Button(action: {
                         guard let userCoord = locationManager.userLocation else { return }
-                        region.center = userCoord
-                        region.span = MKCoordinateSpan(latitudeDelta: 0.03, longitudeDelta: 0.03)
+                        let userPOI = POI(
+                            name: "You",
+                            category: "User",
+                            address: "Current Location",
+                            coordinate: userCoord
+                        )
+                        viewModel.centerOn(userPOI)
                     }) {
                         Image(systemName: "location.north.circle.fill")
                             .font(.title2)
@@ -133,22 +133,18 @@ struct MapView: View {
 
     // MARK: - Helpers
 
-    // Create a "user" POI if user location exists (so it merges cleanly with POIs)
     private var userAnnotation: POI? {
         guard let coord = locationManager.userLocation else { return nil }
         return POI(
             name: "You",
-            category: "User",             // placeholder for required field
-            address: "Current Location",  // placeholder for required field
+            category: "User",
+            address: "Current Location",
             coordinate: coord
         )
     }
 
-    // Merge POIs from the view model with the optional user annotation.
-    // Keep the POIs first so selecting shows them correctly.
     private var allAnnotations: [POI] {
         if let user = userAnnotation {
-            // put user at the end to avoid accidental equality with real POIs
             return viewModel.pois + [user]
         } else {
             return viewModel.pois
@@ -156,7 +152,7 @@ struct MapView: View {
     }
 
     private func performSearch(query: String? = nil) {
-        let coordinateToUse = locationManager.userLocation ?? region.center
+        let coordinateToUse = locationManager.userLocation ?? viewModel.region.center
         let searchTerm = query ?? searchQuery
         guard !searchTerm.isEmpty else { return }
         viewModel.searchPOIs(query: searchTerm, near: coordinateToUse)
