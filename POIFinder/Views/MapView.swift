@@ -95,19 +95,41 @@ struct MapView: View {
 
                     Spacer()
 
-                    Button(action: { print("Close tapped") }) {
-                        Image(systemName: "xmark.circle.fill")
-                            .font(.title2)
-                            .foregroundColor(.red)
+//                    Button(action: { print("Close tapped") }) {
+//                        Image(systemName: "xmark.circle.fill")
+//                            .font(.title2)
+//                            .foregroundColor(.red)
+//                    }
+                }
+                .padding(.horizontal)
+
+                HStack {
+                    TextField("Search places...", text: $searchQuery)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .submitLabel(.search)
+                        .onSubmit { performSearch() }
+
+                    Spacer()
+
+                    if !searchQuery.isEmpty || !viewModel.suggestions.isEmpty {
+                        Button(action: {
+                            // Clear search and dismiss keyboard
+                            searchQuery = ""
+                            viewModel.suggestions = []
+                            UIApplication.shared.sendAction(
+                                #selector(UIResponder.resignFirstResponder),
+                                to: nil, from: nil, for: nil
+                            )
+                        }) {
+                            Image(systemName: "xmark.circle.fill")
+                                .font(.title2)
+                                .foregroundColor(.red)
+                        }
                     }
                 }
                 .padding(.horizontal)
 
-                TextField("Search places...", text: $searchQuery)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .submitLabel(.search)
-                    .onSubmit { performSearch() }
-
+                // Suggestions List
                 if !viewModel.suggestions.isEmpty {
                     List(viewModel.suggestions, id: \.self) { suggestion in
                         Button(action: {
