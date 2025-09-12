@@ -14,6 +14,7 @@ class MapViewModel: ObservableObject {
     @Published var selectedPOI: POI?
     @Published var suggestions: [MKLocalSearchCompletion] = []
     @Published var favorites: [POI] = []
+    @Published var errorMessage: String?   
 
     private let searchService = POISearchService()
     private let completerService = SearchCompleterService()
@@ -24,14 +25,31 @@ class MapViewModel: ObservableObject {
             .receive(on: DispatchQueue.main)
             .assign(to: \.suggestions, on: self)
             .store(in: &cancellables)
-        
+
+        // Listen for completer errors if service publishes them
+        completerService.$errorMessage
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] msg in
+                if let msg = msg { self?.errorMessage = msg }
+            }
+            .store(in: &cancellables)
+
         fetchFavoritesFromStorage()
     }
 
     func searchPOIs(query: String, near coordinate: CLLocationCoordinate2D) {
-        searchService.search(query: query, near: coordinate) { [weak self] results in
+        searchService.search(query: query, near: coordinate) { [weak self] result in
             DispatchQueue.main.async {
-                self?.pois = results
+                switch result {
+                case .success(let results):
+                    if results.isEmpty {
+                        self?.errorMessage = "No results found for '\(query)'"
+                    } else {
+                        self?.pois = results
+                    }
+                case .failure(let error):
+                    self?.errorMessage = "Search failed: \(error.localizedDescription)"
+                }
             }
         }
     }

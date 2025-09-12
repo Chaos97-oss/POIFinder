@@ -9,44 +9,40 @@ import Foundation
 import MapKit
 
 class POISearchService {
-    func search(query: String, near coordinate: CLLocationCoordinate2D, completion: @escaping ([POI]) -> Void) {
+    func search(query: String,
+                near coordinate: CLLocationCoordinate2D,
+                completion: @escaping (Result<[POI], Error>) -> Void) {
+        
         let request = MKLocalSearch.Request()
         request.naturalLanguageQuery = query
-        request.region = MKCoordinateRegion(center: coordinate, latitudinalMeters: 5000, longitudinalMeters: 5000)
+        request.region = MKCoordinateRegion(
+            center: coordinate,
+            span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
+        )
 
         let search = MKLocalSearch(request: request)
         search.start { response, error in
             if let error = error {
-                print("Search error:", error)
-                completion([])
+                completion(.failure(error))
                 return
             }
 
-            guard let response = response else {
-                print("Search response is nil")
-                completion([])
+            guard let mapItems = response?.mapItems else {
+                completion(.success([]))      
                 return
             }
 
-             let items = response.mapItems
-             guard !items.isEmpty else {
-                print("No map items found in region:", request.region)
-                completion([])
-                return
-            }
-
-            
-            let pois = items.compactMap { item -> POI? in
-                guard let name = item.name, let location = item.placemark.location else { return nil }
+            let pois = mapItems.compactMap { item -> POI? in
+                guard let name = item.name else { return nil }
                 return POI(
                     name: name,
-                    category: item.pointOfInterestCategory?.rawValue ?? "Unknown",
-                    address: item.placemark.title ?? "",
-                    coordinate: location.coordinate
+                    category: item.pointOfInterestCategory?.rawValue ?? "Uncategorized",
+                    address: item.placemark.title ?? "No address",
+                    coordinate: item.placemark.coordinate
                 )
             }
-            print("POIs found:", pois.map { $0.name })
-            completion(pois)
+
+            completion(.success(pois))
         }
     }
 }

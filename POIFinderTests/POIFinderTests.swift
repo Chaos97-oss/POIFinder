@@ -1,36 +1,42 @@
+////
+////  POIFinderTests.swift
+////  POIFinderTests
+////
+////  Created by Chaos on 9/11/25.
+////
 //
-//  POIFinderTests.swift
-//  POIFinderTests
+//import XCTest
+//import CoreLocation
+//@testable import POIFinder
 //
-//  Created by Chaos on 9/11/25.
+//final class MapScreenTests: XCTestCase {
 //
-
-import XCTest
-@testable import POIFinder
-
-final class POIFinderTests: XCTestCase {
-
-    override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-    }
-
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-    }
-
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        // Any test you write for XCTest can be annotated as throws and async.
-        // Mark your test throws to produce an unexpected failure when your test encounters an uncaught error.
-        // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions afterwards.
-    }
-
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
-        }
-    }
-
-}
+//    func testPOIEquality() {
+//        let coord = CLLocationCoordinate2D(latitude: 6.5244, longitude: 3.3792)
+//
+//        let poi1 = POI(name: "Test", category: "Restaurant", address: "Lagos", coordinate: coord)
+//        let poi2 = POI(name: "Test", category: "Restaurant", address: "Lagos", coordinate: coord)
+//
+//        // Equality is based on UUID — different UUIDs should not be equal
+//        XCTAssertNotEqual(poi1, poi2)
+//    }
+//
+//    func testUserAnnotationPOI() {
+//        let location = CLLocationCoordinate2D(latitude: 10.0, longitude: 20.0)
+//        let userPOI = POI(name: "You", category: "User", address: "Current Location", coordinate: location)
+//
+//        XCTAssertEqual(userPOI.name, "You")
+//        XCTAssertEqual(userPOI.category, "User")
+//        XCTAssertEqual(userPOI.address, "Current Location")
+//        XCTAssertEqual(userPOI.coordinate.latitude, 10.0)
+//        XCTAssertEqual(userPOI.coordinate.longitude, 20.0)
+//    }
+//
+//    func testPOIHashable() {
+//        let coord = CLLocationCoordinate2D(latitude: 1.0, longitude: 2.0)
+//        let poi = POI(name: "Place", category: "Test", address: "Somewhere", coordinate: coord)
+//
+//        let set: Set<POI> = [poi]
+//        XCTAssertTrue(set.contains(poi))
+//    }
+//}

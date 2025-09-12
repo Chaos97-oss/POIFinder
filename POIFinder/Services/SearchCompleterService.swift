@@ -11,7 +11,8 @@ import Combine
 
 class SearchCompleterService: NSObject, ObservableObject, MKLocalSearchCompleterDelegate {
     @Published var suggestions: [MKLocalSearchCompletion] = []
-
+    @Published var errorMessage: String?
+    
     private let completer: MKLocalSearchCompleter
 
     override init() {
@@ -30,7 +31,7 @@ class SearchCompleterService: NSObject, ObservableObject, MKLocalSearchCompleter
     }
 
     func completer(_ completer: MKLocalSearchCompleter, didFailWithError error: Error) {
-        print("Autocomplete error:", error.localizedDescription)
-        suggestions = []
-    }
+           errorMessage = "Autocomplete failed: \(error.localizedDescription)"  
+           suggestions = []
+       }
 }
