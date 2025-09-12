@@ -14,6 +14,7 @@ struct POI: Identifiable, Equatable {
     let category: String
     let address: String
     let coordinate: CLLocationCoordinate2D
+    var isFavorite: Bool = false
     
     static func == (lhs: POI, rhs: POI) -> Bool {
             lhs.id == rhs.id

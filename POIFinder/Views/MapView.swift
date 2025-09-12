@@ -18,19 +18,33 @@ struct MapView: View {
 
     var body: some View {
         ZStack(alignment: .top) {
-            // Map with merged annotations (POIs + optional user)
+            // Map with merged annotations (POIs + user + favorites)
             Map(coordinateRegion: $viewModel.region, annotationItems: allAnnotations) { (annotation: POI) in
                 MapAnnotation(coordinate: annotation.coordinate) {
                     if annotation.category == "User" {
-                        // Red pin for user
+                        // 🔴 Red pin for user
                         Image(systemName: "mappin.circle.fill")
                             .foregroundColor(.red)
                             .font(.title)
-                    } else {
-                        // Blue pin for POIs
+
+                    } else if annotation.isFavorite {
+                        // ⭐️ Yellow pin for favorites
                         Button(action: {
                             viewModel.selectedPOI = annotation
-                            viewModel.centerOn(annotation)   // 👈 smooth animation
+                            viewModel.centerOn(annotation) // smooth animation
+                        }) {
+                            Image(systemName: "mappin.circle.fill")
+                                .foregroundColor(.yellow)
+                                .font(.title)
+                                .scaleEffect(viewModel.selectedPOI?.id == annotation.id ? 1.3 : 1.0)
+                                .animation(.easeInOut, value: viewModel.selectedPOI?.id)
+                        }
+
+                    } else {
+                        // 🔵 Blue pin for normal POIs
+                        Button(action: {
+                            viewModel.selectedPOI = annotation
+                            viewModel.centerOn(annotation)
                         }) {
                             Image(systemName: "mappin.circle.fill")
                                 .foregroundColor(.blue)
@@ -49,17 +63,13 @@ struct MapView: View {
                 }
                 hasCenteredOnUser = true
             }
-            .onReceive(viewModel.$pois) { newPOIs in
-                guard let first = newPOIs.first else { return }
-                viewModel.centerOn(first)
-            }
             .sheet(item: $viewModel.selectedPOI, onDismiss: {
                 viewModel.selectedPOI = nil
             }) { poi in
                 POIDetailView(poi: poi, viewModel: viewModel)
             }
 
-            // Controls overlay (favorites, compass, close, search)
+            // Controls overlay
             VStack(spacing: 10) {
                 HStack {
                     Button(action: { showingFavorites = true }) {
@@ -143,12 +153,23 @@ struct MapView: View {
         )
     }
 
+    // Merge POIs, favorites, and user safely
     private var allAnnotations: [POI] {
-        if let user = userAnnotation {
-            return viewModel.pois + [user]
-        } else {
-            return viewModel.pois
+        var annotations = viewModel.pois
+        
+        // Add favorites if not already included
+        for fav in viewModel.favorites {
+            if !annotations.contains(where: { $0.id == fav.id }) {
+                annotations.append(fav)
+            }
         }
+        
+        // Add user location
+        if let user = userAnnotation {
+            annotations.append(user)
+        }
+        
+        return annotations
     }
 
     private func performSearch(query: String? = nil) {

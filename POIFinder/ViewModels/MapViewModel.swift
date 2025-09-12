@@ -69,7 +69,11 @@ class MapViewModel: ObservableObject {
     }
 
     private func fetchFavoritesFromStorage() {
-        favorites = PersistenceService.shared.fetchFavorites()
+        favorites = PersistenceService.shared.fetchFavorites().map { poi in
+            var updated = poi
+            updated.isFavorite = true
+            return updated
+        }
     }
 
     func deleteFavorite(_ poi: POI) {
