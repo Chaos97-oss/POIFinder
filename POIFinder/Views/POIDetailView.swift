@@ -5,12 +5,13 @@
 //  Created by Chaos on 9/11/25.
 //
 
-import Foundation
 import SwiftUI
+import CoreLocation
 
 struct POIDetailView: View {
     let poi: POI
     @ObservedObject var viewModel: MapViewModel
+    var locationManager: LocationManager   // 👈 Inject this
 
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
@@ -38,6 +39,22 @@ struct POIDetailView: View {
                 .frame(maxWidth: .infinity)
                 .background(Color.yellow)
                 .foregroundColor(.black)
+                .cornerRadius(10)
+            }
+
+            Button(action: {
+                if let userCoord = locationManager.userLocation {
+                    viewModel.getDirections(to: poi.coordinate, from: userCoord)
+                }
+            }) {
+                HStack {
+                    Image(systemName: "car.fill")
+                    Text("Get Directions")
+                }
+                .padding()
+                .frame(maxWidth: .infinity)
+                .background(Color.blue)
+                .foregroundColor(.white)
                 .cornerRadius(10)
             }
         }

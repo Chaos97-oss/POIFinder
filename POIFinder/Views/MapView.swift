@@ -18,43 +18,12 @@ struct MapView: View {
 
     var body: some View {
         ZStack(alignment: .top) {
-            // Map with merged annotations (POIs + user + favorites)
-            Map(coordinateRegion: $viewModel.region, annotationItems: allAnnotations) { (annotation: POI) in
-                MapAnnotation(coordinate: annotation.coordinate) {
-                    if annotation.category == "User" {
-                        // 🔴 Red pin for user
-                        Image(systemName: "mappin.circle.fill")
-                            .foregroundColor(.red)
-                            .font(.title)
-
-                    } else if annotation.isFavorite {
-                        // ⭐️ Yellow pin for favorites
-                        Button(action: {
-                            viewModel.selectedPOI = annotation
-                            viewModel.centerOn(annotation) // smooth animation
-                        }) {
-                            Image(systemName: "mappin.circle.fill")
-                                .foregroundColor(.yellow)
-                                .font(.title)
-                                .scaleEffect(viewModel.selectedPOI?.id == annotation.id ? 1.3 : 1.0)
-                                .animation(.easeInOut, value: viewModel.selectedPOI?.id)
-                        }
-
-                    } else {
-                        // 🔵 Blue pin for normal POIs
-                        Button(action: {
-                            viewModel.selectedPOI = annotation
-                            viewModel.centerOn(annotation)
-                        }) {
-                            Image(systemName: "mappin.circle.fill")
-                                .foregroundColor(.blue)
-                                .font(.title)
-                                .scaleEffect(viewModel.selectedPOI?.id == annotation.id ? 1.3 : 1.0)
-                                .animation(.easeInOut, value: viewModel.selectedPOI?.id)
-                        }
-                    }
-                }
-            }
+            // ✅ Use wrapper with annotations + route overlay
+            MapViewWrapper(
+                region: $viewModel.region,
+                pois: allAnnotations,
+                route: viewModel.currentRoute
+            )
             .edgesIgnoringSafeArea(.all)
             .onReceive(locationManager.$userLocation) { newLocation in
                 guard let coord = newLocation, !hasCenteredOnUser else { return }
@@ -66,7 +35,7 @@ struct MapView: View {
             .sheet(item: $viewModel.selectedPOI, onDismiss: {
                 viewModel.selectedPOI = nil
             }) { poi in
-                POIDetailView(poi: poi, viewModel: viewModel)
+                POIDetailView(poi: poi, viewModel: viewModel, locationManager: locationManager)
             }
 
             // Controls overlay
@@ -94,12 +63,6 @@ struct MapView: View {
                     }
 
                     Spacer()
-
-//                    Button(action: { print("Close tapped") }) {
-//                        Image(systemName: "xmark.circle.fill")
-//                            .font(.title2)
-//                            .foregroundColor(.red)
-//                    }
                 }
                 .padding(.horizontal)
 

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		040BAC922E76CD82002BB68F /* MapViewWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 040BAC912E76CD82002BB68F /* MapViewWrapper.swift */; };
 		044316BF2E7249F500B06BA7 /* POIFinderApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 044316BE2E7249F500B06BA7 /* POIFinderApp.swift */; };
 		044316C12E7249F500B06BA7 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 044316C02E7249F500B06BA7 /* ContentView.swift */; };
 		044316C32E7249F700B06BA7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 044316C22E7249F700B06BA7 /* Assets.xcassets */; };
@@ -45,6 +46,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		040BAC912E76CD82002BB68F /* MapViewWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewWrapper.swift; sourceTree = "<group>"; };
 		044316BB2E7249F500B06BA7 /* POIFinder.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = POIFinder.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		044316BE2E7249F500B06BA7 /* POIFinderApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = POIFinderApp.swift; sourceTree = "<group>"; };
 		044316C02E7249F500B06BA7 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -190,6 +192,7 @@
 				04A3E3392E725A0400D001DA /* MapView.swift */,
 				04A3E33B2E725A1A00D001DA /* POIDetailView.swift */,
 				04A3E33D2E725A2D00D001DA /* FavoritesView.swift */,
+				040BAC912E76CD82002BB68F /* MapViewWrapper.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -331,6 +334,7 @@
 				04A3E3402E72632F00D001DA /* SearchCompleterService.swift in Sources */,
 				04A3E33C2E725A1A00D001DA /* POIDetailView.swift in Sources */,
 				04A3E3342E72598800D001DA /* LocationManager.swift in Sources */,
+				040BAC922E76CD82002BB68F /* MapViewWrapper.swift in Sources */,
 				044316CB2E7249F700B06BA7 /* POIFinder.xcdatamodeld in Sources */,
 				044316BF2E7249F500B06BA7 /* POIFinderApp.swift in Sources */,
 				04A3E33E2E725A2D00D001DA /* FavoritesView.swift in Sources */,

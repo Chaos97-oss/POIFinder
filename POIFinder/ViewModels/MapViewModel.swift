@@ -15,6 +15,7 @@ class MapViewModel: ObservableObject {
     @Published var suggestions: [MKLocalSearchCompletion] = []
     @Published var favorites: [POI] = []
     @Published var errorMessage: String?
+    @Published var currentRoute: MKRoute?
     
     //  New: Track the visible map region
     @Published var region: MKCoordinateRegion = MKCoordinateRegion(
@@ -58,7 +59,28 @@ class MapViewModel: ObservableObject {
             }
         }
     }
+    
+    func getDirections(to destination: CLLocationCoordinate2D, from userLocation: CLLocationCoordinate2D) {
+        let request = MKDirections.Request()
+        request.source = MKMapItem(placemark: MKPlacemark(coordinate: userLocation))
+        request.destination = MKMapItem(placemark: MKPlacemark(coordinate: destination))
+        request.transportType = .automobile
 
+        let directions = MKDirections(request: request)
+        directions.calculate { [weak self] response, error in
+            if let route = response?.routes.first {
+                DispatchQueue.main.async {
+                    self?.currentRoute = route
+                    self?.region = MKCoordinateRegion(route.polyline.boundingMapRect)
+                }
+            }
+        }
+    }
+    
+//    func clearRoute() {
+//            route = nil
+//        }
+    
     func saveFavorite(_ poi: POI) {
         PersistenceService.shared.save(poi: poi)
         fetchFavoritesFromStorage()
