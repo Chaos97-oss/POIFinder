@@ -21,6 +21,7 @@ struct MapView: View {
             // ✅ Use wrapper with annotations + route overlay
             MapViewWrapper(
                 region: $viewModel.region,
+                selectedPOI: $viewModel.selectedPOI,
                 pois: allAnnotations,
                 route: viewModel.currentRoute
             )
