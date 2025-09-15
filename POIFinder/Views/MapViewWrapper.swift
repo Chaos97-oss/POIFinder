@@ -170,15 +170,18 @@ struct MapViewWrapper: UIViewRepresentable {
             if let existing = context.coordinator.annotationMap[key] {
                 incomingAnnotations.append(existing)
             } else {
-                let ann = POIAnnotation(title: poi.name,
-                                        subtitle: poi.address,
-                                        coordinate: poi.coordinate,
-                                        category: poi.isFavorite ? "Favorite" : poi.category)
+                let ann = POIAnnotation(
+                    title: poi.name,
+                    subtitle: poi.address,
+                    coordinate: poi.coordinate,
+                    category: poi.isFavorite ? "Favorite" : poi.category
+                )
                 context.coordinator.annotationMap[key] = ann
                 incomingAnnotations.append(ann)
             }
         }
 
+        // Remove old annotations
         let currentKeys = Set(context.coordinator.annotationMap.keys)
         let keysToRemove = currentKeys.subtracting(incomingKeys)
         for key in keysToRemove {
@@ -188,13 +191,29 @@ struct MapViewWrapper: UIViewRepresentable {
             }
         }
 
+        // Add new annotations
         let existingAnnotations = Set(uiView.annotations.compactMap { $0 as? POIAnnotation }.map {
             "\($0.coordinate.latitude),\($0.coordinate.longitude)-\($0.title ?? "")"
         })
+
         for ann in incomingAnnotations {
             let key = "\(ann.coordinate.latitude),\(ann.coordinate.longitude)-\(ann.title ?? "")"
             if !existingAnnotations.contains(key) {
                 uiView.addAnnotation(ann)
+            }
+
+            // --- Update marker color dynamically based on latest POI favorite status ---
+            if let poi = pois.first(where: {
+                $0.name == ann.title &&
+                abs($0.coordinate.latitude - ann.coordinate.latitude) < 1e-6 &&
+                abs($0.coordinate.longitude - ann.coordinate.longitude) < 1e-6
+            }) {
+                let color: UIColor = poi.isFavorite ? .systemYellow :
+                    (poi.category == "User" ? .systemRed : .systemBlue)
+
+                if let existingView = uiView.view(for: ann) as? MKMarkerAnnotationView {
+                    existingView.markerTintColor = color
+                }
             }
         }
 

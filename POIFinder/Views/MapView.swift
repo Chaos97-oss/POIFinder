@@ -77,13 +77,18 @@ struct MapView: View {
 
                     if !searchQuery.isEmpty || !viewModel.suggestions.isEmpty {
                         Button(action: {
-                            // Clear search and dismiss keyboard
-                            searchQuery = ""
-                            viewModel.suggestions = []
-                            UIApplication.shared.sendAction(
-                                #selector(UIResponder.resignFirstResponder),
-                                to: nil, from: nil, for: nil
-                            )
+                            if viewModel.currentRoute != nil {
+                                // Cancel the route
+                                viewModel.currentRoute = nil
+                            } else if !searchQuery.isEmpty || !viewModel.suggestions.isEmpty {
+                                // Clear search and dismiss keyboard
+                                searchQuery = ""
+                                viewModel.suggestions = []
+                                UIApplication.shared.sendAction(
+                                    #selector(UIResponder.resignFirstResponder),
+                                    to: nil, from: nil, for: nil
+                                )
+                            }
                         }) {
                             Image(systemName: "xmark.circle.fill")
                                 .font(.title2)
