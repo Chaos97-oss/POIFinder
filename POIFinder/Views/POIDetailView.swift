@@ -79,5 +79,28 @@ struct POIDetailView: View {
             }
         }
         .padding()
-    }
-}
+               .sheet(isPresented: $showingNoteEditor) {
+                   NavigationView {
+                       VStack {
+                           TextField("Enter note...", text: $draftNote, axis: .vertical)
+                               .textFieldStyle(RoundedBorderTextFieldStyle())
+                               .padding()
+
+                           Spacer()
+                       }
+                       .navigationTitle("Edit Note")
+                       .toolbar {
+                           ToolbarItem(placement: .cancellationAction) {
+                               Button("Cancel") { showingNoteEditor = false }
+                           }
+                           ToolbarItem(placement: .confirmationAction) {
+                               Button("Save") {
+                                   viewModel.updateNote(for: poi, note: draftNote)
+                                   showingNoteEditor = false
+                               }
+                           }
+                       }
+                   }
+               }
+           }
+       }
