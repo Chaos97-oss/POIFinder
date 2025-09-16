@@ -70,7 +70,6 @@ struct FavoritesView: View {
                             }
                             .buttonStyle(BorderlessButtonStyle())
 
-                            // Delete button
                             Button(action: {
                                 viewModel.deleteFavorite(poi)
                             }) {

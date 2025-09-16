@@ -45,7 +45,6 @@ struct POIDetailView: View {
                         .foregroundColor(.white)
                         .cornerRadius(10)
 
-
             Spacer()
 
             Button(action: {

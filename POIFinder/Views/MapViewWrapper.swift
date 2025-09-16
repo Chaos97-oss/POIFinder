@@ -225,17 +225,17 @@ struct MapViewWrapper: UIViewRepresentable {
     }
 }
 
-// MARK: - POIAnnotation
-class POIAnnotation: NSObject, MKAnnotation {
-    let title: String?
-    let subtitle: String?
-    let coordinate: CLLocationCoordinate2D
-    let category: String
+    // MARK: - POIAnnotation
+    class POIAnnotation: NSObject, MKAnnotation {
+        let title: String?
+        let subtitle: String?
+        let coordinate: CLLocationCoordinate2D
+        let category: String
 
-    init(title: String, subtitle: String, coordinate: CLLocationCoordinate2D, category: String) {
-        self.title = title
-        self.subtitle = subtitle
-        self.coordinate = coordinate
-        self.category = category
-    }
+        init(title: String, subtitle: String, coordinate: CLLocationCoordinate2D, category: String) {
+            self.title = title
+            self.subtitle = subtitle
+            self.coordinate = coordinate
+            self.category = category
+        }
 }
