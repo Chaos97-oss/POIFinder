@@ -8,94 +8,80 @@
 import SwiftUI
 import MapKit
 
+// MARK: - MapViewWrapper
 struct MapViewWrapper: UIViewRepresentable {
     @Binding var region: MKCoordinateRegion
     @Binding var selectedPOI: POI?
     var pois: [POI]
     var route: MKRoute?
 
+    // MARK: - Coordinator
     class Coordinator: NSObject, MKMapViewDelegate {
         var parent: MapViewWrapper
         var isUserDraggingMap = false
-        let centerThreshold: CLLocationDegrees = 0.0005
         var annotationMap: [String: POIAnnotation] = [:]
+
+        private let centerThreshold: CLLocationDegrees = 0.0005
 
         init(_ parent: MapViewWrapper) {
             self.parent = parent
         }
 
-        // MARK: - Helpers
-        func key(for poi: POI) -> String {
+        // MARK: Annotation Helpers
+        func annotationKey(for poi: POI) -> String {
             "\(poi.coordinate.latitude),\(poi.coordinate.longitude)-\(poi.name)"
         }
 
-        // MARK: - Annotation View
+        // MARK: - Annotations
         func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
             guard !(annotation is MKUserLocation) else { return nil }
 
             let identifier = "POIAnnotation"
-            var view = mapView.dequeueReusableAnnotationView(withIdentifier: identifier) as? MKMarkerAnnotationView
+            let view = mapView.dequeueReusableAnnotationView(withIdentifier: identifier) as? MKMarkerAnnotationView
+                ?? MKMarkerAnnotationView(annotation: annotation, reuseIdentifier: identifier)
 
-            if view == nil {
-                view = MKMarkerAnnotationView(annotation: annotation, reuseIdentifier: identifier)
-                view?.canShowCallout = true
-                let btn = UIButton(type: .detailDisclosure)
-                view?.rightCalloutAccessoryView = btn
-            } else {
-                view?.annotation = annotation
-            }
+            view.annotation = annotation
+            view.canShowCallout = true
+            view.rightCalloutAccessoryView = UIButton(type: .detailDisclosure)
 
             if let poiAnn = annotation as? POIAnnotation {
-                switch poiAnn.category {
-                case "User": view?.markerTintColor = .systemRed
-                case "Favorite": view?.markerTintColor = .systemYellow
-                default: view?.markerTintColor = .systemBlue
-                }
+                view.markerTintColor = markerColor(for: poiAnn)
             }
 
             return view
         }
 
-        // MARK: - Route Drawing
-        func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
-            if let polyline = overlay as? MKPolyline {
-                let renderer = MKPolylineRenderer(polyline: polyline)
-                renderer.strokeColor = .systemBlue
-                renderer.lineWidth = 4
-                return renderer
+        private func markerColor(for annotation: POIAnnotation) -> UIColor {
+            switch annotation.category {
+            case "User": return .systemRed
+            case "Favorite": return .systemYellow
+            default: return .systemBlue
             }
-            return MKOverlayRenderer()
         }
 
-        // MARK: - Annotation Tap
+        // MARK: - Callout Tap
         func mapView(_ mapView: MKMapView, annotationView view: MKAnnotationView,
                      calloutAccessoryControlTapped control: UIControl) {
             guard let poiAnn = view.annotation as? POIAnnotation else { return }
 
-            if let match = parent.pois.first(where: {
+            let match = parent.pois.first {
                 abs($0.coordinate.latitude - poiAnn.coordinate.latitude) < 1e-6 &&
                 abs($0.coordinate.longitude - poiAnn.coordinate.longitude) < 1e-6 &&
                 $0.name == poiAnn.title
-            }) {
-                parent.selectedPOI = match
-            } else {
-                parent.selectedPOI = POI(name: poiAnn.title ?? "Unknown",
-                                         category: poiAnn.category,
-                                         address: poiAnn.subtitle ?? "",
-                                         coordinate: poiAnn.coordinate)
             }
+
+            parent.selectedPOI = match ?? POI(
+                name: poiAnn.title ?? "Unknown",
+                category: poiAnn.category,
+                address: poiAnn.subtitle ?? "",
+                coordinate: poiAnn.coordinate
+            )
         }
 
-        // MARK: - Map Drag Handling
+        // MARK: - Map Gestures
         func mapView(_ mapView: MKMapView, regionWillChangeAnimated animated: Bool) {
-            // Check if the change is triggered by user gesture
-            if let gestureRecognizers = mapView.gestureRecognizers {
-                for gr in gestureRecognizers {
-                    if gr.state == .began || gr.state == .changed {
-                        isUserDraggingMap = true
-                        break
-                    }
-                }
+            if mapView.gestureRecognizers?.contains(where: { $0.state == .began || $0.state == .changed }) == true {
+                isUserDraggingMap = true
             }
         }
 
@@ -106,38 +92,47 @@ struct MapViewWrapper: UIViewRepresentable {
             }
         }
 
-        // MARK: - Show Route (on Get Directions)
-        func showRoute(from source: CLLocationCoordinate2D, to destination: CLLocationCoordinate2D, on mapView: MKMapView) {
+        // MARK: - Overlays
+        func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
+            guard let polyline = overlay as? MKPolyline else { return MKOverlayRenderer() }
+            let renderer = MKPolylineRenderer(polyline: polyline)
+            renderer.strokeColor = .systemBlue
+            renderer.lineWidth = 4
+            return renderer
+        }
+
+        // MARK: - Directions
+        func showRoute(from source: CLLocationCoordinate2D,
+                       to destination: CLLocationCoordinate2D,
+                       on mapView: MKMapView) {
             let request = MKDirections.Request()
             request.source = MKMapItem(placemark: MKPlacemark(coordinate: source))
             request.destination = MKMapItem(placemark: MKPlacemark(coordinate: destination))
             request.transportType = .automobile
 
-            let directions = MKDirections(request: request)
-            directions.calculate { [weak self] response, error in
-                guard let self = self else { return }
-                if let route = response?.routes.first {
-                    DispatchQueue.main.async {
-                        mapView.removeOverlays(mapView.overlays) // clear old route
-                        mapView.addOverlay(route.polyline)
-                        self.parent.route = route
+            MKDirections(request: request).calculate { [weak self] response, error in
+                guard let self = self, let route = response?.routes.first else {
+                    if let error = error { print("Route error:", error.localizedDescription) }
+                    return
+                }
 
-                        mapView.setVisibleMapRect(
-                            route.polyline.boundingMapRect,
-                            edgePadding: UIEdgeInsets(top: 60, left: 40, bottom: 60, right: 40),
-                            animated: true
-                        )
-                    }
-                } else if let error = error {
-                    print("Route error:", error.localizedDescription)
+                DispatchQueue.main.async {
+                    mapView.removeOverlays(mapView.overlays)
+                    mapView.addOverlay(route.polyline)
+                    self.parent.route = route
+
+                    mapView.setVisibleMapRect(
+                        route.polyline.boundingMapRect,
+                        edgePadding: UIEdgeInsets(top: 60, left: 40, bottom: 60, right: 40),
+                        animated: true
+                    )
                 }
             }
         }
     }
 
-    func makeCoordinator() -> Coordinator {
-        Coordinator(self)
-    }
+    // MARK: - UIViewRepresentable
+    func makeCoordinator() -> Coordinator { Coordinator(self) }
 
     func makeUIView(context: Context) -> MKMapView {
         let mapView = MKMapView(frame: .zero)
@@ -149,41 +144,47 @@ struct MapViewWrapper: UIViewRepresentable {
     }
 
     func updateUIView(_ uiView: MKMapView, context: Context) {
-        // --- Sync region programmatically only if user is NOT dragging ---
-        let uiCenter = uiView.region.center
-        let newCenter = region.center
-        let latDiff = abs(uiCenter.latitude - newCenter.latitude)
-        let lonDiff = abs(uiCenter.longitude - newCenter.longitude)
+        syncRegion(uiView, context: context)
+        updateAnnotations(on: uiView, context: context)
+        updateRoute(on: uiView)
+    }
+
+    // MARK: - Region Sync
+    private func syncRegion(_ uiView: MKMapView, context: Context) {
+        let diffLat = abs(uiView.region.center.latitude - region.center.latitude)
+        let diffLon = abs(uiView.region.center.longitude - region.center.longitude)
         let threshold: CLLocationDegrees = 0.0005
 
-        if !context.coordinator.isUserDraggingMap && (latDiff > threshold || lonDiff > threshold) {
+        if !context.coordinator.isUserDraggingMap && (diffLat > threshold || diffLon > threshold) {
             uiView.setRegion(region, animated: true)
         }
+    }
 
-        // --- Efficient annotation update ---
+    // MARK: - Annotations
+    private func updateAnnotations(on uiView: MKMapView, context: Context) {
         var incomingKeys = Set<String>()
-        var incomingAnnotations: [POIAnnotation] = []
+        var newAnnotations: [POIAnnotation] = []
 
         for poi in pois {
-            let key = "\(poi.coordinate.latitude),\(poi.coordinate.longitude)-\(poi.name)"
+            let key = context.coordinator.annotationKey(for: poi)
             incomingKeys.insert(key)
+
             if let existing = context.coordinator.annotationMap[key] {
-                incomingAnnotations.append(existing)
+                newAnnotations.append(existing)
             } else {
-                let ann = POIAnnotation(
+                let annotation = POIAnnotation(
                     title: poi.name,
                     subtitle: poi.address,
                     coordinate: poi.coordinate,
                     category: poi.isFavorite ? "Favorite" : poi.category
                 )
-                context.coordinator.annotationMap[key] = ann
-                incomingAnnotations.append(ann)
+                context.coordinator.annotationMap[key] = annotation
+                newAnnotations.append(annotation)
             }
         }
 
         // Remove old annotations
-        let currentKeys = Set(context.coordinator.annotationMap.keys)
-        let keysToRemove = currentKeys.subtracting(incomingKeys)
+        let keysToRemove = Set(context.coordinator.annotationMap.keys).subtracting(incomingKeys)
         for key in keysToRemove {
             if let ann = context.coordinator.annotationMap[key] {
                 uiView.removeAnnotation(ann)
@@ -192,42 +193,29 @@ struct MapViewWrapper: UIViewRepresentable {
         }
 
         // Add new annotations
-        let existingAnnotations = Set(uiView.annotations.compactMap { $0 as? POIAnnotation }.map {
-            "\($0.coordinate.latitude),\($0.coordinate.longitude)-\($0.title ?? "")"
-        })
+        let existingKeys = Set(
+            uiView.annotations.compactMap { $0 as? POIAnnotation }
+                .map { context.coordinator.annotationKey(for: POI(name: $0.title ?? "", category: $0.category, address: $0.subtitle ?? "", coordinate: $0.coordinate)) }
+        )
 
-        for ann in incomingAnnotations {
-            let key = "\(ann.coordinate.latitude),\(ann.coordinate.longitude)-\(ann.title ?? "")"
-            if !existingAnnotations.contains(key) {
-                uiView.addAnnotation(ann)
-            }
-
-            // --- Update marker color dynamically based on latest POI favorite status ---
-            if let poi = pois.first(where: {
-                $0.name == ann.title &&
-                abs($0.coordinate.latitude - ann.coordinate.latitude) < 1e-6 &&
-                abs($0.coordinate.longitude - ann.coordinate.longitude) < 1e-6
-            }) {
-                let color: UIColor = poi.isFavorite ? .systemYellow :
-                    (poi.category == "User" ? .systemRed : .systemBlue)
-
-                if let existingView = uiView.view(for: ann) as? MKMarkerAnnotationView {
-                    existingView.markerTintColor = color
-                }
-            }
+        for ann in newAnnotations where !existingKeys.contains(context.coordinator.annotationKey(for: POI(name: ann.title ?? "", category: ann.category, address: ann.subtitle ?? "", coordinate: ann.coordinate))) {
+            uiView.addAnnotation(ann)
         }
+    }
 
-        // --- Overlay drawing (polyline) ---
+    // MARK: - Routes
+    private func updateRoute(on uiView: MKMapView) {
         let existingPolylines = uiView.overlays.compactMap { $0 as? MKPolyline }
+
         if let route = route {
             if !existingPolylines.contains(where: { $0 === route.polyline }) {
                 uiView.removeOverlays(existingPolylines)
                 uiView.addOverlay(route.polyline)
                 uiView.setVisibleMapRect(
-                            route.polyline.boundingMapRect,
-                            edgePadding: UIEdgeInsets(top: 60, left: 40, bottom: 60, right: 40),
-                            animated: true
-                            )
+                    route.polyline.boundingMapRect,
+                    edgePadding: UIEdgeInsets(top: 60, left: 40, bottom: 60, right: 40),
+                    animated: true
+                )
             }
         } else {
             uiView.removeOverlays(existingPolylines)

@@ -12,7 +12,6 @@ import CoreLocation
 class PersistenceService {
     static let shared = PersistenceService()
     private init() {}
-
     lazy var persistentContainer: NSPersistentContainer = {
         let container = NSPersistentContainer(name: "POIFinder")
         container.loadPersistentStores { _, error in
@@ -76,8 +75,7 @@ class PersistenceService {
     func delete(poi: POI) {
         let context = context
         let request: NSFetchRequest<NSManagedObject> = NSFetchRequest(entityName: "FavoritePOI")
-        request.predicate = NSPredicate(format: "name == %@", poi.name) 
-
+        request.predicate = NSPredicate(format: "name == %@", poi.name)
         do {
             if let objectToDelete = try context.fetch(request).first {
                 context.delete(objectToDelete)

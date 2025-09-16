@@ -12,7 +12,6 @@ class POISearchService {
     func search(query: String,
                 near coordinate: CLLocationCoordinate2D,
                 completion: @escaping (Result<[POI], Error>) -> Void) {
-        
         let request = MKLocalSearch.Request()
         request.naturalLanguageQuery = query
         request.region = MKCoordinateRegion(
@@ -41,7 +40,6 @@ class POISearchService {
                     coordinate: item.placemark.coordinate
                 )
             }
-
             completion(.success(pois))
         }
     }

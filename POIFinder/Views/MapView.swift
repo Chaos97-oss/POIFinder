@@ -18,7 +18,6 @@ struct MapView: View {
 
     var body: some View {
         ZStack(alignment: .top) {
-            // --- Map with wrapper
             MapViewWrapper(
                 region: $viewModel.region,
                 selectedPOI: $viewModel.selectedPOI,
@@ -39,8 +38,6 @@ struct MapView: View {
             }) { poi in
                 POIDetailView(poi: poi, viewModel: viewModel, locationManager: locationManager)
             }
-
-            // --- Overlay controls
             VStack(spacing: 10) {
                 topControlButtons
                 searchBar

@@ -10,12 +10,12 @@ import SwiftUI
 
 struct FavoritesView: View {
     @ObservedObject var viewModel: MapViewModel
-    var onSelect: ((POI) -> Void)? = nil  // optional closure for parent
+    var onSelect: ((POI) -> Void)? = nil
     @Environment(\.dismiss) var dismiss
 
     var body: some View {
         VStack(alignment: .leading) {
-            // Header
+            
             HStack {
                 Image(systemName: "star.fill")
                     .foregroundColor(.yellow)
@@ -50,14 +50,12 @@ struct FavoritesView: View {
 
                             Spacer()
 
-                            // Navigate button
                             Button(action: {
                                 dismiss()
                                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
                                     if let callback = onSelect {
                                         callback(poi)
                                     } else {
-                                        // fallback: directly update viewModel
                                         viewModel.selectedPOI = poi
                                         viewModel.centerOn(poi)
                                         if let userCoord = viewModel.userLocation {

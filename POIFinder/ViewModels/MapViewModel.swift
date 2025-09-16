@@ -17,10 +17,8 @@ class MapViewModel: ObservableObject {
     @Published var errorMessage: String?
     @Published var currentRoute: MKRoute?
     @Published var userLocation: CLLocationCoordinate2D?
-    
-    // Track the visible map region
     @Published var region: MKCoordinateRegion = MKCoordinateRegion(
-        center: CLLocationCoordinate2D(latitude: 6.5244, longitude: 3.3792), // hardcoding to demonstrate ui smoothness
+        center: CLLocationCoordinate2D(latitude: 6.5244, longitude: 3.3792), 
         span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
     )
 
@@ -115,7 +113,7 @@ class MapViewModel: ObservableObject {
         completerService.updateQuery(query)
     }
 
-    //  New: Re-center map on a favorite or POI
+    
     func centerOn(_ poi: POI) {
         let newRegion = MKCoordinateRegion(
             center: poi.coordinate,

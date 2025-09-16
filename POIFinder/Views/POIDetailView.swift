@@ -11,7 +11,7 @@ import CoreLocation
 struct POIDetailView: View {
     let poi: POI
     @ObservedObject var viewModel: MapViewModel
-    var locationManager: LocationManager   // 👈 Inject this
+    var locationManager: LocationManager  
 
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
