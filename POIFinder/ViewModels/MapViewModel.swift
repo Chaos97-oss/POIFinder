@@ -18,9 +18,9 @@ class MapViewModel: ObservableObject {
     @Published var currentRoute: MKRoute?
     @Published var userLocation: CLLocationCoordinate2D?
     
-    //  New: Track the visible map region
+    // Track the visible map region
     @Published var region: MKCoordinateRegion = MKCoordinateRegion(
-        center: CLLocationCoordinate2D(latitude: 6.5244, longitude: 3.3792), // default Lagos, Nigeria
+        center: CLLocationCoordinate2D(latitude: 6.5244, longitude: 3.3792), // hardcoding to demonstrate ui smoothness
         span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
     )
 
@@ -68,26 +68,26 @@ class MapViewModel: ObservableObject {
         }
     }
     
-    func getDirections(to destination: CLLocationCoordinate2D, from userLocation: CLLocationCoordinate2D) {
+    func getDirections(to destination: CLLocationCoordinate2D, from source: CLLocationCoordinate2D) {
         let request = MKDirections.Request()
-        request.source = MKMapItem(placemark: MKPlacemark(coordinate: userLocation))
+        request.source = MKMapItem(placemark: MKPlacemark(coordinate: source))
         request.destination = MKMapItem(placemark: MKPlacemark(coordinate: destination))
         request.transportType = .automobile
 
         let directions = MKDirections(request: request)
         directions.calculate { [weak self] response, error in
+            guard let self = self else { return }
             if let route = response?.routes.first {
                 DispatchQueue.main.async {
-                    self?.currentRoute = route
-                    self?.region = MKCoordinateRegion(route.polyline.boundingMapRect)
+                    self.currentRoute = route
                 }
+            } else if let error = error {
+                print("Directions error:", error.localizedDescription)
             }
         }
     }
     
-//    func clearRoute() {
-//            route = nil
-//        }
+
     
     func saveFavorite(_ poi: POI) {
         PersistenceService.shared.save(poi: poi)
@@ -115,7 +115,7 @@ class MapViewModel: ObservableObject {
         completerService.updateQuery(query)
     }
 
-    // 👇 New: Re-center map on a favorite or POI
+    //  New: Re-center map on a favorite or POI
     func centerOn(_ poi: POI) {
         let newRegion = MKCoordinateRegion(
             center: poi.coordinate,

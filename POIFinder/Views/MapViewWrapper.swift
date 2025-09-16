@@ -218,9 +218,19 @@ struct MapViewWrapper: UIViewRepresentable {
         }
 
         // --- Overlay drawing (polyline) ---
-        uiView.overlays.forEach { uiView.removeOverlay($0) } // remove previous
+        let existingPolylines = uiView.overlays.compactMap { $0 as? MKPolyline }
         if let route = route {
-            uiView.addOverlay(route.polyline)
+            if !existingPolylines.contains(where: { $0 === route.polyline }) {
+                uiView.removeOverlays(existingPolylines)
+                uiView.addOverlay(route.polyline)
+                uiView.setVisibleMapRect(
+                            route.polyline.boundingMapRect,
+                            edgePadding: UIEdgeInsets(top: 60, left: 40, bottom: 60, right: 40),
+                            animated: true
+                            )
+            }
+        } else {
+            uiView.removeOverlays(existingPolylines)
         }
     }
 }
