@@ -16,6 +16,7 @@ class MapViewModel: ObservableObject {
     @Published var favorites: [POI] = []
     @Published var errorMessage: String?
     @Published var currentRoute: MKRoute?
+    @Published var userLocation: CLLocationCoordinate2D?
     
     //  New: Track the visible map region
     @Published var region: MKCoordinateRegion = MKCoordinateRegion(

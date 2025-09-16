@@ -60,6 +60,9 @@ struct FavoritesView: View {
                                         // fallback: directly update viewModel
                                         viewModel.selectedPOI = poi
                                         viewModel.centerOn(poi)
+                                        if let userCoord = viewModel.userLocation {
+                                    viewModel.getDirections(to: poi.coordinate, from: userCoord)
+                                }
                                     }
                                 }
                             }) {

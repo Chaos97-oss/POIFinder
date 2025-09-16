@@ -28,6 +28,7 @@ struct MapView: View {
             .edgesIgnoringSafeArea(.all)
             .onReceive(locationManager.$userLocation) { newLocation in
                 guard let coord = newLocation, !hasCenteredOnUser else { return }
+                viewModel.userLocation = newLocation
                 withAnimation {
                     viewModel.region.center = coord
                 }
@@ -54,6 +55,9 @@ struct MapView: View {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
                     viewModel.centerOn(selectedPOI)
                     viewModel.selectedPOI = selectedPOI
+                    if let userCoord = viewModel.userLocation {
+                    viewModel.getDirections(to: selectedPOI.coordinate, from: userCoord)
+                }
                 }
             })
         }
