@@ -11,7 +11,11 @@ import CoreLocation
 struct POIDetailView: View {
     let poi: POI
     @ObservedObject var viewModel: MapViewModel
-    var locationManager: LocationManager  
+    var locationManager: LocationManager
+    
+    @State private var showingNoteEditor = false
+    @State private var draftNote: String = ""
+
 
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
@@ -25,6 +29,22 @@ struct POIDetailView: View {
 
             Text(poi.address)
                 .font(.body)
+            if let existingNote = poi.note, !existingNote.isEmpty {
+                            Text("Note: \(existingNote)")
+                                .padding(.top, 8)
+                                .foregroundColor(.secondary)
+                        }
+
+                        Button("Add/Edit Note") {
+                            draftNote = poi.note ?? ""
+                            showingNoteEditor = true
+                        }
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .background(Color.green.opacity(0.8))
+                        .foregroundColor(.white)
+                        .cornerRadius(10)
+
 
             Spacer()
 

@@ -22,7 +22,8 @@ struct MapView: View {
                 region: $viewModel.region,
                 selectedPOI: $viewModel.selectedPOI,
                 pois: allAnnotations,
-                route: viewModel.currentRoute
+                route: viewModel.currentRoute,
+                mapType: viewModel.mapType
             )
             .edgesIgnoringSafeArea(.all)
             .onReceive(locationManager.$userLocation) { newLocation in
@@ -73,6 +74,13 @@ struct MapView: View {
                 Image(systemName: "location.north.circle.fill")
                     .font(.title2)
                     .foregroundColor(.blue)
+                
+            Button(action: { viewModel.toggleMapType() }) {
+                Image(systemName: viewModel.mapType == .standard ?
+                      "moon.circle.fill" : "sun.max.circle.fill")
+                        .font(.title2)
+                        .foregroundColor(.purple)
+                }
             }
 
             Spacer()

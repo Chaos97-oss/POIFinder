@@ -15,6 +15,7 @@ class MapViewModel: ObservableObject {
     @Published var suggestions: [MKLocalSearchCompletion] = []
     @Published var favorites: [POI] = []
     @Published var errorMessage: String?
+    @Published var mapType: MKMapType = .standard
     @Published var currentRoute: MKRoute?
     @Published var userLocation: CLLocationCoordinate2D?
     @Published var region: MKCoordinateRegion = MKCoordinateRegion(
@@ -66,6 +67,15 @@ class MapViewModel: ObservableObject {
         }
     }
     
+    func updateNote(for poi: POI, note: String) {
+            if let index = pois.firstIndex(where: { $0.id == poi.id }) {
+                pois[index].note = note
+            }
+            if let index = favorites.firstIndex(where: { $0.id == poi.id }) {
+                favorites[index].note = note
+            }
+    }
+    
     func getDirections(to destination: CLLocationCoordinate2D, from source: CLLocationCoordinate2D) {
         let request = MKDirections.Request()
         request.source = MKMapItem(placemark: MKPlacemark(coordinate: source))
@@ -90,6 +100,10 @@ class MapViewModel: ObservableObject {
     func saveFavorite(_ poi: POI) {
         PersistenceService.shared.save(poi: poi)
         fetchFavoritesFromStorage()
+    }
+    
+    func toggleMapType() {
+        mapType = (mapType == .standard) ? .mutedStandard : .standard
     }
 
     func fetchFavorites() -> [POI] {

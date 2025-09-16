@@ -14,15 +14,17 @@ struct MapViewWrapper: UIViewRepresentable {
     @Binding var selectedPOI: POI?
     var pois: [POI]
     var route: MKRoute?
-
+    var mapType: MKMapType
+    
     // MARK: - Coordinator
     class Coordinator: NSObject, MKMapViewDelegate {
         var parent: MapViewWrapper
         var isUserDraggingMap = false
         var annotationMap: [String: POIAnnotation] = [:]
-
+        
         private let centerThreshold: CLLocationDegrees = 0.0005
 
+        
         init(_ parent: MapViewWrapper) {
             self.parent = parent
         }
@@ -140,12 +142,14 @@ struct MapViewWrapper: UIViewRepresentable {
         mapView.showsUserLocation = true
         mapView.userTrackingMode = .none
         mapView.setRegion(region, animated: false)
+        mapView.mapType = mapType
         return mapView
     }
 
     func updateUIView(_ uiView: MKMapView, context: Context) {
         syncRegion(uiView, context: context)
         updateAnnotations(on: uiView, context: context)
+        uiView.mapType = mapType
         updateRoute(on: uiView)
     }
 
