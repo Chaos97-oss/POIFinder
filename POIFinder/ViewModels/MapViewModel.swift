@@ -16,9 +16,8 @@ class MapViewModel: ObservableObject {
     @Published var favorites: [POI] = []
     @Published var errorMessage: String?
     
-    //  New: Track the visible map region
     @Published var region: MKCoordinateRegion = MKCoordinateRegion(
-        center: CLLocationCoordinate2D(latitude: 6.5244, longitude: 3.3792), // default Lagos, Nigeria
+        center: CLLocationCoordinate2D(latitude: 6.5244, longitude: 3.3792),
         span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
     )
 
@@ -27,30 +26,31 @@ class MapViewModel: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
 
     init() {
+        // Wire SearchCompleterService to suggestions
         completerService.$suggestions
             .receive(on: DispatchQueue.main)
             .assign(to: \.suggestions, on: self)
             .store(in: &cancellables)
-
+        
         completerService.$errorMessage
             .receive(on: DispatchQueue.main)
             .sink { [weak self] msg in
                 if let msg = msg { self?.errorMessage = msg }
             }
             .store(in: &cancellables)
-
+        
         fetchFavoritesFromStorage()
     }
 
+    // MARK: - Search POIs
     func searchPOIs(query: String, near coordinate: CLLocationCoordinate2D) {
         searchService.search(query: query, near: coordinate) { [weak self] result in
             DispatchQueue.main.async {
                 switch result {
                 case .success(let results):
+                    self?.pois = results
                     if results.isEmpty {
                         self?.errorMessage = "No results found for '\(query)'"
-                    } else {
-                        self?.pois = results
                     }
                 case .failure(let error):
                     self?.errorMessage = "Search failed: \(error.localizedDescription)"
@@ -59,13 +59,20 @@ class MapViewModel: ObservableObject {
         }
     }
 
+    // MARK: - Live suggestions
+    func updateSearchQuery(_ query: String) {
+        completerService.updateQuery(query)
+    }
+
+    // MARK: - Favorites
     func saveFavorite(_ poi: POI) {
         PersistenceService.shared.save(poi: poi)
         fetchFavoritesFromStorage()
     }
 
-    func fetchFavorites() -> [POI] {
-        return favorites
+    func deleteFavorite(_ poi: POI) {
+        PersistenceService.shared.delete(poi: poi)
+        fetchFavoritesFromStorage()
     }
 
     private func fetchFavoritesFromStorage() {
@@ -76,16 +83,7 @@ class MapViewModel: ObservableObject {
         }
     }
 
-    func deleteFavorite(_ poi: POI) {
-        PersistenceService.shared.delete(poi: poi)
-        fetchFavoritesFromStorage()
-    }
-
-    func updateSearchQuery(_ query: String) {
-        completerService.updateQuery(query)
-    }
-
-    // 👇 New: Re-center map on a favorite or POI
+    // MARK: - Map helper
     func centerOn(_ poi: POI) {
         let newRegion = MKCoordinateRegion(
             center: poi.coordinate,

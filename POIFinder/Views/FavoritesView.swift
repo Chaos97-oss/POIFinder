@@ -12,6 +12,9 @@ struct FavoritesView: View {
     @ObservedObject var viewModel: MapViewModel
     @Environment(\.dismiss) var dismiss
 
+    // Callback closure to pass the selected POI back
+    var onSelectPOI: ((POI) -> Void)? = nil
+
     var body: some View {
         VStack(alignment: .leading) {
             // Header
@@ -51,16 +54,16 @@ struct FavoritesView: View {
 
                             // Navigate button
                             Button(action: {
-                                // Only navigate, no delete
-                                viewModel.selectedPOI = poi
-                                viewModel.centerOn(poi)
+                                // Use callback instead of direct state changes
                                 dismiss()
+                                onSelectPOI?(poi)
                             }) {
                                 Image(systemName: "arrow.up.right.circle.fill")
                                     .foregroundColor(.blue)
                                     .font(.title2)
                             }
                             .buttonStyle(BorderlessButtonStyle())
+
                             // Delete button
                             Button(action: {
                                 viewModel.deleteFavorite(poi)

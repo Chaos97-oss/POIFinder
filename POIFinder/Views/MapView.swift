@@ -35,6 +35,18 @@ struct MapView: View {
             .sheet(item: $viewModel.selectedPOI) { poi in
                 POIDetailView(poi: poi, viewModel: viewModel)
             }
+            .sheet(isPresented: $showingFavorites) {
+                FavoritesView(viewModel: viewModel) { selectedPOI in
+                    // Callback when a POI is selected from favorites
+                    showingFavorites = false
+                    
+                    // Update selectedPOI after the sheet is dismissed
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        viewModel.selectedPOI = selectedPOI
+                        viewModel.centerOn(selectedPOI)
+                    }
+                }
+            }
 
             // MARK: - Controls Overlay
             VStack(spacing: 10) {
@@ -45,9 +57,9 @@ struct MapView: View {
             }
             .padding(.top, 50)
         }
-        .sheet(isPresented: $showingFavorites) {
-            FavoritesView(viewModel: viewModel)
-        }
+//        .sheet(isPresented: $showingFavorites) {
+//            FavoritesView(viewModel: viewModel)
+//        }
     }
 
     // MARK: - Top Buttons

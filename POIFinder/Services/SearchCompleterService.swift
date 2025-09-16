@@ -23,24 +23,25 @@ class SearchCompleterService: NSObject, ObservableObject, MKLocalSearchCompleter
     }
 
     func updateQuery(_ query: String) {
-            guard !query.isEmpty else {
-                suggestions = []
-                return
+        DispatchQueue.main.async {
+            if query.isEmpty {
+                self.suggestions = []
+            } else {
+                self.completer.queryFragment = query
             }
-            completer.queryFragment = query
         }
-
+    }
 
     func completerDidUpdateResults(_ completer: MKLocalSearchCompleter) {
-            DispatchQueue.main.async {
-                self.suggestions = completer.results
-            }
+        DispatchQueue.main.async {
+            self.suggestions = completer.results
         }
+    }
 
-        func completer(_ completer: MKLocalSearchCompleter, didFailWithError error: Error) {
-            DispatchQueue.main.async {
-                self.errorMessage = "Autocomplete failed: \(error.localizedDescription)"
-                self.suggestions = []
-            }
+    func completer(_ completer: MKLocalSearchCompleter, didFailWithError error: Error) {
+        DispatchQueue.main.async {
+            self.errorMessage = "Autocomplete failed: \(error.localizedDescription)"
+            self.suggestions = []
         }
+    }
 }
