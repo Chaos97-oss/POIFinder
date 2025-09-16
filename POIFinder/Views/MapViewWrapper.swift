@@ -20,6 +20,7 @@ struct MapViewWrapper: UIViewRepresentable {
     class Coordinator: NSObject, MKMapViewDelegate {
         var parent: MapViewWrapper
         var isUserDraggingMap = false
+        var lastSyncedRegion: MKCoordinateRegion?
         var annotationMap: [String: POIAnnotation] = [:]
         
         private let centerThreshold: CLLocationDegrees = 0.0005
@@ -147,12 +148,28 @@ struct MapViewWrapper: UIViewRepresentable {
     }
 
     func updateUIView(_ uiView: MKMapView, context: Context) {
-        syncRegion(uiView, context: context)
+        let coord = region.center
+        if !context.coordinator.isUserDraggingMap {
+            if let last = context.coordinator.lastSyncedRegion {
+                let diffLat = abs(last.center.latitude - coord.latitude)
+                let diffLon = abs(last.center.longitude - coord.longitude)
+                if diffLat > 0.0008 || diffLon > 0.0008 {
+                    uiView.setRegion(region, animated: true)
+                    context.coordinator.lastSyncedRegion = region
+                }
+            } else {
+                uiView.setRegion(region, animated: false)
+                context.coordinator.lastSyncedRegion = region
+            }
+        }
         updateAnnotations(on: uiView, context: context)
-        uiView.mapType = mapType
+        if uiView.mapType != mapType {
+            uiView.mapType = mapType
+        }
         updateRoute(on: uiView)
     }
-
+    
+    
     // MARK: - Region Sync
     private func syncRegion(_ uiView: MKMapView, context: Context) {
         let diffLat = abs(uiView.region.center.latitude - region.center.latitude)
@@ -166,44 +183,25 @@ struct MapViewWrapper: UIViewRepresentable {
 
     // MARK: - Annotations
     private func updateAnnotations(on uiView: MKMapView, context: Context) {
-        var incomingKeys = Set<String>()
-        var newAnnotations: [POIAnnotation] = []
-
-        for poi in pois {
-            let key = context.coordinator.annotationKey(for: poi)
-            incomingKeys.insert(key)
-
-            if let existing = context.coordinator.annotationMap[key] {
-                newAnnotations.append(existing)
-            } else {
-                let annotation = POIAnnotation(
-                    title: poi.name,
-                    subtitle: poi.address,
-                    coordinate: poi.coordinate,
-                    category: poi.isFavorite ? "Favorite" : poi.category
-                )
-                context.coordinator.annotationMap[key] = annotation
-                newAnnotations.append(annotation)
-            }
+        let newKeys = Set(pois.map { context.coordinator.annotationKey(for: $0) })
+        let oldKeys = Set(context.coordinator.annotationMap.keys)
+        let keysToAdd = newKeys.subtracting(oldKeys)
+        for poi in pois where keysToAdd.contains(context.coordinator.annotationKey(for: poi)) {
+            let annotation = POIAnnotation(
+                title: poi.name,
+                subtitle: poi.address,
+                coordinate: poi.coordinate,
+                category: poi.isFavorite ? "Favorite" : poi.category
+            )
+            context.coordinator.annotationMap[context.coordinator.annotationKey(for: poi)] = annotation
+            uiView.addAnnotation(annotation)
         }
-
-        // Remove old annotations
-        let keysToRemove = Set(context.coordinator.annotationMap.keys).subtracting(incomingKeys)
+        let keysToRemove = oldKeys.subtracting(newKeys)
         for key in keysToRemove {
             if let ann = context.coordinator.annotationMap[key] {
                 uiView.removeAnnotation(ann)
                 context.coordinator.annotationMap.removeValue(forKey: key)
             }
-        }
-
-        // Add new annotations
-        let existingKeys = Set(
-            uiView.annotations.compactMap { $0 as? POIAnnotation }
-                .map { context.coordinator.annotationKey(for: POI(name: $0.title ?? "", category: $0.category, address: $0.subtitle ?? "", coordinate: $0.coordinate)) }
-        )
-
-        for ann in newAnnotations where !existingKeys.contains(context.coordinator.annotationKey(for: POI(name: ann.title ?? "", category: ann.category, address: ann.subtitle ?? "", coordinate: ann.coordinate))) {
-            uiView.addAnnotation(ann)
         }
     }
 

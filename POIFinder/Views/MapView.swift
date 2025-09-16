@@ -63,7 +63,7 @@ struct MapView: View {
 
     // MARK: - Top Buttons
     private var topControlButtons: some View {
-        HStack {
+        HStack(spacing: 20) {
             Button(action: { showingFavorites = true }) {
                 Image(systemName: "star.fill")
                     .foregroundColor(.yellow)
@@ -74,13 +74,13 @@ struct MapView: View {
                 Image(systemName: "location.north.circle.fill")
                     .font(.title2)
                     .foregroundColor(.blue)
-                
+            }
+
             Button(action: { viewModel.toggleMapType() }) {
                 Image(systemName: viewModel.mapType == .standard ?
                       "moon.circle.fill" : "sun.max.circle.fill")
-                        .font(.title2)
-                        .foregroundColor(.purple)
-                }
+                    .font(.title2)
+                    .foregroundColor(.purple)
             }
 
             Spacer()

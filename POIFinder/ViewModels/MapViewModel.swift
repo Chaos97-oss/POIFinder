@@ -124,7 +124,10 @@ class MapViewModel: ObservableObject {
     }
 
     func updateSearchQuery(_ query: String) {
-        completerService.updateQuery(query)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+            if query == self.completerService.currentQuery { return }
+            self.completerService.updateQuery(query)
+        }
     }
 
     

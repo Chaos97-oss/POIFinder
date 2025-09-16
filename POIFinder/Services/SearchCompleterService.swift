@@ -12,6 +12,7 @@ import Combine
 class SearchCompleterService: NSObject, ObservableObject, MKLocalSearchCompleterDelegate {
     @Published var suggestions: [MKLocalSearchCompletion] = []
     @Published var errorMessage: String?
+    var currentQuery: String = ""   
     
     private let completer: MKLocalSearchCompleter
 
