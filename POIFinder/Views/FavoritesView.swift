@@ -11,13 +11,10 @@ import SwiftUI
 struct FavoritesView: View {
     @ObservedObject var viewModel: MapViewModel
     @Environment(\.dismiss) var dismiss
-
-    // Callback closure to pass the selected POI back
+    
     var onSelectPOI: ((POI) -> Void)? = nil
-
     var body: some View {
         VStack(alignment: .leading) {
-            // Header
             HStack {
                 Image(systemName: "star.fill")
                     .foregroundColor(.yellow)
@@ -51,10 +48,8 @@ struct FavoritesView: View {
                             }
 
                             Spacer()
-
-                            // Navigate button
+                            
                             Button(action: {
-                                // Use callback instead of direct state changes
                                 dismiss()
                                 onSelectPOI?(poi)
                             }) {
@@ -64,7 +59,7 @@ struct FavoritesView: View {
                             }
                             .buttonStyle(BorderlessButtonStyle())
 
-                            // Delete button
+                
                             Button(action: {
                                 viewModel.deleteFavorite(poi)
                             }) {

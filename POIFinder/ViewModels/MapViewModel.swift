@@ -26,7 +26,6 @@ class MapViewModel: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
 
     init() {
-        // Wire SearchCompleterService to suggestions
         completerService.$suggestions
             .receive(on: DispatchQueue.main)
             .assign(to: \.suggestions, on: self)
