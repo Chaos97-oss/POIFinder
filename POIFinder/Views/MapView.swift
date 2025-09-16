@@ -18,142 +18,29 @@ struct MapView: View {
 
     var body: some View {
         ZStack(alignment: .top) {
-            // Map with merged annotations (POIs + user + favorites)
-            Map(coordinateRegion: $viewModel.region, annotationItems: allAnnotations) { (annotation: POI) in
+            // MARK: - Map
+            Map(coordinateRegion: $viewModel.region, annotationItems: allAnnotations) { annotation in
                 MapAnnotation(coordinate: annotation.coordinate) {
-                    if annotation.category == "User" {
-                        // 🔴 Red pin for user
-                        Image(systemName: "mappin.circle.fill")
-                            .foregroundColor(.red)
-                            .font(.title)
-
-                    } else if annotation.isFavorite {
-                        // ⭐️ Yellow pin for favorites
-                        Button(action: {
-                            viewModel.selectedPOI = annotation
-                            viewModel.centerOn(annotation) // smooth animation
-                        }) {
-                            Image(systemName: "mappin.circle.fill")
-                                .foregroundColor(.yellow)
-                                .font(.title)
-                                .scaleEffect(viewModel.selectedPOI?.id == annotation.id ? 1.3 : 1.0)
-                                .animation(.easeInOut, value: viewModel.selectedPOI?.id)
-                        }
-
-                    } else {
-                        // 🔵 Blue pin for normal POIs
-                        Button(action: {
-                            viewModel.selectedPOI = annotation
-                            viewModel.centerOn(annotation)
-                        }) {
-                            Image(systemName: "mappin.circle.fill")
-                                .foregroundColor(.blue)
-                                .font(.title)
-                                .scaleEffect(viewModel.selectedPOI?.id == annotation.id ? 1.3 : 1.0)
-                                .animation(.easeInOut, value: viewModel.selectedPOI?.id)
-                        }
-                    }
+                    annotationView(for: annotation)
                 }
             }
             .edgesIgnoringSafeArea(.all)
             .onReceive(locationManager.$userLocation) { newLocation in
                 guard let coord = newLocation, !hasCenteredOnUser else { return }
-                withAnimation {
+                withAnimation(.easeInOut) {
                     viewModel.region.center = coord
                 }
                 hasCenteredOnUser = true
             }
-            .sheet(item: $viewModel.selectedPOI, onDismiss: {
-                viewModel.selectedPOI = nil
-            }) { poi in
+            .sheet(item: $viewModel.selectedPOI) { poi in
                 POIDetailView(poi: poi, viewModel: viewModel)
             }
 
-            // Controls overlay
+            // MARK: - Controls Overlay
             VStack(spacing: 10) {
-                HStack {
-                    Button(action: { showingFavorites = true }) {
-                        Image(systemName: "star.fill")
-                            .foregroundColor(.yellow)
-                            .font(.title2)
-                    }
-
-                    Button(action: {
-                        guard let userCoord = locationManager.userLocation else { return }
-                        let userPOI = POI(
-                            name: "You",
-                            category: "User",
-                            address: "Current Location",
-                            coordinate: userCoord
-                        )
-                        viewModel.centerOn(userPOI)
-                    }) {
-                        Image(systemName: "location.north.circle.fill")
-                            .font(.title2)
-                            .foregroundColor(.blue)
-                    }
-
-                    Spacer()
-
-//                    Button(action: { print("Close tapped") }) {
-//                        Image(systemName: "xmark.circle.fill")
-//                            .font(.title2)
-//                            .foregroundColor(.red)
-//                    }
-                }
-                .padding(.horizontal)
-
-                HStack {
-                    TextField("Search places...", text: $searchQuery)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                        .submitLabel(.search)
-                        .onSubmit { performSearch() }
-
-                    Spacer()
-
-                    if !searchQuery.isEmpty || !viewModel.suggestions.isEmpty {
-                        Button(action: {
-                            // Clear search and dismiss keyboard
-                            searchQuery = ""
-                            viewModel.suggestions = []
-                            UIApplication.shared.sendAction(
-                                #selector(UIResponder.resignFirstResponder),
-                                to: nil, from: nil, for: nil
-                            )
-                        }) {
-                            Image(systemName: "xmark.circle.fill")
-                                .font(.title2)
-                                .foregroundColor(.red)
-                        }
-                    }
-                }
-                .padding(.horizontal)
-
-                // Suggestions List
-                if !viewModel.suggestions.isEmpty {
-                    List(viewModel.suggestions, id: \.self) { suggestion in
-                        Button(action: {
-                            searchQuery = suggestion.title
-                            performSearch(query: suggestion.title)
-                        }) {
-                            VStack(alignment: .leading) {
-                                Text(suggestion.title).bold()
-                                if !suggestion.subtitle.isEmpty {
-                                    Text(suggestion.subtitle)
-                                        .font(.subheadline)
-                                        .foregroundColor(.gray)
-                                }
-                            }
-                        }
-                    }
-                    .frame(maxHeight: 200)
-                    .background(Color.white.opacity(0.9))
-                    .cornerRadius(10)
-                    .padding(.horizontal)
-                    .transition(.move(edge: .top).combined(with: .opacity))
-                    .animation(.easeInOut, value: viewModel.suggestions.count)
-                }
-
+                topControlButtons
+                searchBar
+                suggestionsList
                 Spacer()
             }
             .padding(.top, 50)
@@ -163,8 +50,136 @@ struct MapView: View {
         }
     }
 
-    // MARK: - Helpers
+    // MARK: - Top Buttons
+    private var topControlButtons: some View {
+        HStack {
+            Button(action: { showingFavorites = true }) {
+                Image(systemName: "star.fill")
+                    .foregroundColor(.yellow)
+                    .font(.title2)
+            }
 
+            Button(action: centerOnUser) {
+                Image(systemName: "location.north.circle.fill")
+                    .font(.title2)
+                    .foregroundColor(.blue)
+            }
+
+            Spacer()
+        }
+        .padding(.horizontal)
+    }
+
+    private func centerOnUser() {
+        guard let userCoord = locationManager.userLocation else { return }
+        let userPOI = POI(
+            name: "You",
+            category: "User",
+            address: "Current Location",
+            coordinate: userCoord
+        )
+        viewModel.centerOn(userPOI)
+    }
+
+    // MARK: - Search Bar
+    private var searchBar: some View {
+        HStack {
+            TextField("Search places...", text: $searchQuery)
+                .textFieldStyle(RoundedBorderTextFieldStyle())
+                .submitLabel(.search)
+                .onChange(of: searchQuery) { newValue in
+                    viewModel.updateSearchQuery(newValue) // live suggestions
+                }
+                .onSubmit { performSearch() }
+
+            Spacer()
+
+            if !searchQuery.isEmpty || !viewModel.suggestions.isEmpty {
+                Button(action: clearSearch) {
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.title2)
+                        .foregroundColor(.red)
+                }
+            }
+        }
+        .padding(.horizontal)
+    }
+
+    private func clearSearch() {
+        searchQuery = ""
+        viewModel.suggestions = []
+        UIApplication.shared.sendAction(
+            #selector(UIResponder.resignFirstResponder),
+            to: nil, from: nil, for: nil
+        )
+    }
+
+    // MARK: - Suggestions List
+    private var suggestionsList: some View {
+        if !viewModel.suggestions.isEmpty {
+            return AnyView(
+                List(viewModel.suggestions, id: \.self) { suggestion in
+                    Button(action: {
+                        searchQuery = suggestion.title
+                        viewModel.updateSearchQuery("") // clear suggestions
+                        performSearch(query: suggestion.title)
+                    }) {
+                        VStack(alignment: .leading) {
+                            Text(suggestion.title).bold()
+                            if !suggestion.subtitle.isEmpty {
+                                Text(suggestion.subtitle)
+                                    .font(.subheadline)
+                                    .foregroundColor(.gray)
+                            }
+                        }
+                    }
+                }
+                .frame(maxHeight: 200)
+                .background(Color.white.opacity(0.9))
+                .cornerRadius(10)
+                .padding(.horizontal)
+                .transition(.move(edge: .top).combined(with: .opacity))
+                .animation(.easeInOut, value: viewModel.suggestions.count)
+            )
+        } else {
+            return AnyView(EmptyView())
+        }
+    }
+
+    // MARK: - Map Annotations
+    private func annotationView(for annotation: POI) -> some View {
+        Group {
+            if annotation.category == "User" {
+                Image(systemName: "mappin.circle.fill")
+                    .foregroundColor(.red)
+                    .font(.title)
+            } else if annotation.isFavorite {
+                Button(action: {
+                    viewModel.selectedPOI = annotation
+                    viewModel.centerOn(annotation)
+                }) {
+                    Image(systemName: "mappin.circle.fill")
+                        .foregroundColor(.yellow)
+                        .font(.title)
+                        .scaleEffect(viewModel.selectedPOI?.id == annotation.id ? 1.3 : 1.0)
+                        .animation(.easeInOut, value: viewModel.selectedPOI?.id)
+                }
+            } else {
+                Button(action: {
+                    viewModel.selectedPOI = annotation
+                    viewModel.centerOn(annotation)
+                }) {
+                    Image(systemName: "mappin.circle.fill")
+                        .foregroundColor(.blue)
+                        .font(.title)
+                        .scaleEffect(viewModel.selectedPOI?.id == annotation.id ? 1.3 : 1.0)
+                        .animation(.easeInOut, value: viewModel.selectedPOI?.id)
+                }
+            }
+        }
+    }
+
+    // MARK: - Helpers
     private var userAnnotation: POI? {
         guard let coord = locationManager.userLocation else { return nil }
         return POI(
@@ -175,18 +190,15 @@ struct MapView: View {
         )
     }
 
-    // Merge POIs, favorites, and user safely
     private var allAnnotations: [POI] {
         var annotations = viewModel.pois
         
-        // Add favorites if not already included
         for fav in viewModel.favorites {
             if !annotations.contains(where: { $0.id == fav.id }) {
                 annotations.append(fav)
             }
         }
         
-        // Add user location
         if let user = userAnnotation {
             annotations.append(user)
         }

@@ -19,19 +19,28 @@ class SearchCompleterService: NSObject, ObservableObject, MKLocalSearchCompleter
         completer = MKLocalSearchCompleter()
         super.init()
         completer.delegate = self
-        completer.resultTypes = .pointOfInterest
+        completer.resultTypes = [.address, .pointOfInterest]
     }
 
     func updateQuery(_ query: String) {
-        completer.queryFragment = query
-    }
+            guard !query.isEmpty else {
+                suggestions = []
+                return
+            }
+            completer.queryFragment = query
+        }
 
-    func completer(_ completer: MKLocalSearchCompleter, didUpdateResults results: [MKLocalSearchCompletion]) {
-        suggestions = results
-    }
 
-    func completer(_ completer: MKLocalSearchCompleter, didFailWithError error: Error) {
-           errorMessage = "Autocomplete failed: \(error.localizedDescription)"  
-           suggestions = []
-       }
+    func completerDidUpdateResults(_ completer: MKLocalSearchCompleter) {
+            DispatchQueue.main.async {
+                self.suggestions = completer.results
+            }
+        }
+
+        func completer(_ completer: MKLocalSearchCompleter, didFailWithError error: Error) {
+            DispatchQueue.main.async {
+                self.errorMessage = "Autocomplete failed: \(error.localizedDescription)"
+                self.suggestions = []
+            }
+        }
 }
