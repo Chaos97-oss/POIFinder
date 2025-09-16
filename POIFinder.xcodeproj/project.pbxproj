@@ -9,10 +9,8 @@
 /* Begin PBXBuildFile section */
 		040BAC922E76CD82002BB68F /* MapViewWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 040BAC912E76CD82002BB68F /* MapViewWrapper.swift */; };
 		044316BF2E7249F500B06BA7 /* POIFinderApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 044316BE2E7249F500B06BA7 /* POIFinderApp.swift */; };
-		044316C12E7249F500B06BA7 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 044316C02E7249F500B06BA7 /* ContentView.swift */; };
 		044316C32E7249F700B06BA7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 044316C22E7249F700B06BA7 /* Assets.xcassets */; };
 		044316C62E7249F700B06BA7 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 044316C52E7249F700B06BA7 /* Preview Assets.xcassets */; };
-		044316C82E7249F700B06BA7 /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 044316C72E7249F700B06BA7 /* Persistence.swift */; };
 		044316CB2E7249F700B06BA7 /* POIFinder.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 044316C92E7249F700B06BA7 /* POIFinder.xcdatamodeld */; };
 		044316D52E7249F700B06BA7 /* POIFinderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 044316D42E7249F700B06BA7 /* POIFinderTests.swift */; };
 		044316DF2E7249F800B06BA7 /* POIFinderUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 044316DE2E7249F800B06BA7 /* POIFinderUITests.swift */; };
@@ -49,10 +47,8 @@
 		040BAC912E76CD82002BB68F /* MapViewWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewWrapper.swift; sourceTree = "<group>"; };
 		044316BB2E7249F500B06BA7 /* POIFinder.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = POIFinder.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		044316BE2E7249F500B06BA7 /* POIFinderApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = POIFinderApp.swift; sourceTree = "<group>"; };
-		044316C02E7249F500B06BA7 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		044316C22E7249F700B06BA7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		044316C52E7249F700B06BA7 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
-		044316C72E7249F700B06BA7 /* Persistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence.swift; sourceTree = "<group>"; };
 		044316CA2E7249F700B06BA7 /* POIFinder.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = POIFinder.xcdatamodel; sourceTree = "<group>"; };
 		044316D02E7249F700B06BA7 /* POIFinderTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = POIFinderTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		044316D42E7249F700B06BA7 /* POIFinderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = POIFinderTests.swift; sourceTree = "<group>"; };
@@ -125,9 +121,7 @@
 				04A3E32B2E72583300D001DA /* Models */,
 				044316ED2E724BD100B06BA7 /* Info.plist */,
 				044316BE2E7249F500B06BA7 /* POIFinderApp.swift */,
-				044316C02E7249F500B06BA7 /* ContentView.swift */,
 				044316C22E7249F700B06BA7 /* Assets.xcassets */,
-				044316C72E7249F700B06BA7 /* Persistence.swift */,
 				044316C92E7249F700B06BA7 /* POIFinder.xcdatamodeld */,
 				044316C42E7249F700B06BA7 /* Preview Content */,
 			);
@@ -328,9 +322,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				04A3E3362E7259A300D001DA /* POISearchService.swift in Sources */,
-				044316C82E7249F700B06BA7 /* Persistence.swift in Sources */,
 				04A3E3302E7258F900D001DA /* POI.swift in Sources */,
-				044316C12E7249F500B06BA7 /* ContentView.swift in Sources */,
 				04A3E3402E72632F00D001DA /* SearchCompleterService.swift in Sources */,
 				04A3E33C2E725A1A00D001DA /* POIDetailView.swift in Sources */,
 				04A3E3342E72598800D001DA /* LocationManager.swift in Sources */,
