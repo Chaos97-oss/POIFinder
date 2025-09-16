@@ -44,7 +44,11 @@ class MapViewModel: ObservableObject {
         fetchFavoritesFromStorage()
     }
 
-    func searchPOIs(query: String, near coordinate: CLLocationCoordinate2D) {
+    func searchPOIs(
+        query: String,
+        near coordinate: CLLocationCoordinate2D,
+        completion: ((POI) -> Void)? = nil
+    ) {
         searchService.search(query: query, near: coordinate) { [weak self] result in
             DispatchQueue.main.async {
                 switch result {
@@ -53,6 +57,9 @@ class MapViewModel: ObservableObject {
                         self?.errorMessage = "No results found for '\(query)'"
                     } else {
                         self?.pois = results
+                        if let first = results.first {
+                            completion?(first)
+                        }
                     }
                 case .failure(let error):
                     self?.errorMessage = "Search failed: \(error.localizedDescription)"

@@ -134,10 +134,19 @@ struct MapView: View {
         if !viewModel.suggestions.isEmpty {
             return AnyView(
                 List(viewModel.suggestions, id: \.self) { suggestion in
-                    Button(action: {
-                        searchQuery = suggestion.title
-                        performSearch(query: suggestion.title)
-                        dismissKeyboard()
+        Button(action: {
+            let selectedTitle = suggestion.title
+            searchQuery = selectedTitle
+            performSearch(query: selectedTitle) { poi in
+                viewModel.centerOn(poi)
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                viewModel.suggestions = []
+                UIApplication.shared.sendAction(
+                    #selector(UIResponder.resignFirstResponder),
+                    to: nil, from: nil, for: nil
+                )
+                    }
                     }) {
                         VStack(alignment: .leading) {
                             Text(suggestion.title).bold()
@@ -193,10 +202,14 @@ struct MapView: View {
         return annotations
     }
 
-    private func performSearch(query: String? = nil) {
+    private func performSearch(query: String? = nil, completion: ((POI) -> Void)? = nil) {
         let coordinateToUse = locationManager.userLocation ?? viewModel.region.center
         let searchTerm = query ?? searchQuery
         guard !searchTerm.isEmpty else { return }
-        viewModel.searchPOIs(query: searchTerm, near: coordinateToUse)
+        
+        viewModel.searchPOIs(query: searchTerm, near: coordinateToUse) { poi in
+            completion?(poi)
+        }
     }
+    
 }
