@@ -57,9 +57,6 @@ struct MapView: View {
             }
             .padding(.top, 50)
         }
-        //        .sheet(isPresented: $showingFavorites) {
-        //            FavoritesView(viewModel: viewModel)
-        //        }
     }
     
     // MARK: - Top Buttons
@@ -103,7 +100,7 @@ struct MapView: View {
                     viewModel.updateSearchQuery(newValue) // live suggestions
                 }
                 .onSubmit { performSearch() }
-            
+    
             Spacer()
             
             if !searchQuery.isEmpty || !viewModel.suggestions.isEmpty {
@@ -126,28 +123,30 @@ struct MapView: View {
         )
     }
     
+    
+    
     // MARK: - Suggestions List
     private var suggestionsList: some View {
         if !viewModel.suggestions.isEmpty {
             return AnyView(
                 List(viewModel.suggestions, id: \.self) { suggestion in
-                    Button(action: {
-                        let selectedTitle = suggestion.title
-                        searchQuery = selectedTitle
-                        
-                        // Perform search, then center on first POI
-                        performSearch(query: selectedTitle) { poi in
-                            viewModel.centerOn(poi)
-                        }
-                        
-                        // Delay clearing suggestions to avoid flicker
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
-                            viewModel.suggestions = []
-                            UIApplication.shared.sendAction(
-                                #selector(UIResponder.resignFirstResponder),
-                                to: nil, from: nil, for: nil
-                            )
-                        }
+        Button(action: {
+            let selectedTitle = suggestion.title
+            searchQuery = selectedTitle
+            
+            // Perform search, then center on first POI
+            performSearch(query: selectedTitle) { poi in
+                viewModel.centerOn(poi)
+            }
+            
+            // Delay clearing suggestions to avoid flicker
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                viewModel.suggestions = []
+                UIApplication.shared.sendAction(
+                    #selector(UIResponder.resignFirstResponder),
+                    to: nil, from: nil, for: nil
+                )
+                    }
                     }) {
                         VStack(alignment: .leading) {
                             Text(suggestion.title).bold()
