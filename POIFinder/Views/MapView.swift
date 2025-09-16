@@ -18,7 +18,7 @@ struct MapView: View {
 
     var body: some View {
         ZStack(alignment: .top) {
-            // ✅ Use wrapper with annotations + route overlay
+            // --- Map with wrapper
             MapViewWrapper(
                 region: $viewModel.region,
                 selectedPOI: $viewModel.selectedPOI,
@@ -39,101 +39,132 @@ struct MapView: View {
                 POIDetailView(poi: poi, viewModel: viewModel, locationManager: locationManager)
             }
 
-            // Controls overlay
+            // --- Overlay controls
             VStack(spacing: 10) {
-                HStack {
-                    Button(action: { showingFavorites = true }) {
-                        Image(systemName: "star.fill")
-                            .foregroundColor(.yellow)
-                            .font(.title2)
-                    }
-
-                    Button(action: {
-                        guard let userCoord = locationManager.userLocation else { return }
-                        let userPOI = POI(
-                            name: "You",
-                            category: "User",
-                            address: "Current Location",
-                            coordinate: userCoord
-                        )
-                        viewModel.centerOn(userPOI)
-                    }) {
-                        Image(systemName: "location.north.circle.fill")
-                            .font(.title2)
-                            .foregroundColor(.blue)
-                    }
-
-                    Spacer()
-                }
-                .padding(.horizontal)
-
-                HStack {
-                    TextField("Search places...", text: $searchQuery)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                        .submitLabel(.search)
-                        .onSubmit { performSearch() }
-
-                    Spacer()
-
-                    if !searchQuery.isEmpty || !viewModel.suggestions.isEmpty {
-                        Button(action: {
-                            if viewModel.currentRoute != nil {
-                                // Cancel the route
-                                viewModel.currentRoute = nil
-                            } else if !searchQuery.isEmpty || !viewModel.suggestions.isEmpty {
-                                // Clear search and dismiss keyboard
-                                searchQuery = ""
-                                viewModel.suggestions = []
-                                UIApplication.shared.sendAction(
-                                    #selector(UIResponder.resignFirstResponder),
-                                    to: nil, from: nil, for: nil
-                                )
-                            }
-                        }) {
-                            Image(systemName: "xmark.circle.fill")
-                                .font(.title2)
-                                .foregroundColor(.red)
-                        }
-                    }
-                }
-                .padding(.horizontal)
-
-                // Suggestions List
-                if !viewModel.suggestions.isEmpty {
-                    List(viewModel.suggestions, id: \.self) { suggestion in
-                        Button(action: {
-                            searchQuery = suggestion.title
-                            performSearch(query: suggestion.title)
-                        }) {
-                            VStack(alignment: .leading) {
-                                Text(suggestion.title).bold()
-                                if !suggestion.subtitle.isEmpty {
-                                    Text(suggestion.subtitle)
-                                        .font(.subheadline)
-                                        .foregroundColor(.gray)
-                                }
-                            }
-                        }
-                    }
-                    .frame(maxHeight: 200)
-                    .background(Color.white.opacity(0.9))
-                    .cornerRadius(10)
-                    .padding(.horizontal)
-                    .transition(.move(edge: .top).combined(with: .opacity))
-                    .animation(.easeInOut, value: viewModel.suggestions.count)
-                }
-
+                topControlButtons
+                searchBar
+                suggestionsList
                 Spacer()
             }
             .padding(.top, 50)
         }
         .sheet(isPresented: $showingFavorites) {
-            FavoritesView(viewModel: viewModel)
+            FavoritesView(viewModel: viewModel, onSelect: { selectedPOI in
+                showingFavorites = false
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                    viewModel.centerOn(selectedPOI)
+                    viewModel.selectedPOI = selectedPOI
+                }
+            })
         }
     }
 
-    // MARK: - Helpers
+    // MARK: - Top Buttons
+    private var topControlButtons: some View {
+        HStack {
+            Button(action: { showingFavorites = true }) {
+                Image(systemName: "star.fill")
+                    .foregroundColor(.yellow)
+                    .font(.title2)
+            }
 
+            Button(action: centerOnUser) {
+                Image(systemName: "location.north.circle.fill")
+                    .font(.title2)
+                    .foregroundColor(.blue)
+            }
+
+            Spacer()
+        }
+        .padding(.horizontal)
+    }
+
+    private func centerOnUser() {
+        guard let userCoord = locationManager.userLocation else { return }
+        let userPOI = POI(
+            name: "You",
+            category: "User",
+            address: "Current Location",
+            coordinate: userCoord
+        )
+        withAnimation {
+            viewModel.centerOn(userPOI)
+        }
+    }
+
+    // MARK: - Search Bar
+    private var searchBar: some View {
+        HStack {
+            TextField("Search places...", text: $searchQuery)
+                .textFieldStyle(RoundedBorderTextFieldStyle())
+                .submitLabel(.search)
+                .onChange(of: searchQuery) { newValue in
+                    viewModel.updateSearchQuery(newValue)
+                }
+                .onSubmit { performSearch() }
+
+            Spacer()
+
+            if !searchQuery.isEmpty || !viewModel.suggestions.isEmpty {
+                Button(action: clearSearch) {
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.title2)
+                        .foregroundColor(.red)
+                }
+            }
+        }
+        .padding(.horizontal)
+    }
+
+    private func clearSearch() {
+        searchQuery = ""
+        viewModel.suggestions = []
+        UIApplication.shared.sendAction(
+            #selector(UIResponder.resignFirstResponder),
+            to: nil, from: nil, for: nil
+        )
+    }
+
+    // MARK: - Suggestions List
+    private var suggestionsList: some View {
+        if !viewModel.suggestions.isEmpty {
+            return AnyView(
+                List(viewModel.suggestions, id: \.self) { suggestion in
+                    Button(action: {
+                        searchQuery = suggestion.title
+                        performSearch(query: suggestion.title)
+                        dismissKeyboard()
+                    }) {
+                        VStack(alignment: .leading) {
+                            Text(suggestion.title).bold()
+                            if !suggestion.subtitle.isEmpty {
+                                Text(suggestion.subtitle)
+                                    .font(.subheadline)
+                                    .foregroundColor(.gray)
+                            }
+                        }
+                    }
+                }
+                .frame(maxHeight: 200)
+                .background(Color.white.opacity(0.9))
+                .cornerRadius(10)
+                .padding(.horizontal)
+                .transition(.move(edge: .top).combined(with: .opacity))
+                .animation(.easeInOut, value: viewModel.suggestions.count)
+            )
+        } else {
+            return AnyView(EmptyView())
+        }
+    }
+
+    private func dismissKeyboard() {
+        UIApplication.shared.sendAction(
+            #selector(UIResponder.resignFirstResponder),
+            to: nil, from: nil, for: nil
+        )
+    }
+
+    // MARK: - Helpers
     private var userAnnotation: POI? {
         guard let coord = locationManager.userLocation else { return nil }
         return POI(
@@ -144,22 +175,17 @@ struct MapView: View {
         )
     }
 
-    // Merge POIs, favorites, and user safely
     private var allAnnotations: [POI] {
         var annotations = viewModel.pois
-        
-        // Add favorites if not already included
-        for fav in viewModel.favorites {
-            if !annotations.contains(where: { $0.id == fav.id }) {
-                annotations.append(fav)
-            }
+
+        for fav in viewModel.favorites where !annotations.contains(where: { $0.id == fav.id }) {
+            annotations.append(fav)
         }
-        
-        // Add user location
+
         if let user = userAnnotation {
             annotations.append(user)
         }
-        
+
         return annotations
     }
 

@@ -10,6 +10,7 @@ import SwiftUI
 
 struct FavoritesView: View {
     @ObservedObject var viewModel: MapViewModel
+    var onSelect: ((POI) -> Void)? = nil  // optional closure for parent
     @Environment(\.dismiss) var dismiss
 
     var body: some View {
@@ -51,16 +52,23 @@ struct FavoritesView: View {
 
                             // Navigate button
                             Button(action: {
-                                // Only navigate, no delete
-                                viewModel.selectedPOI = poi
-                                viewModel.centerOn(poi)
                                 dismiss()
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                                    if let callback = onSelect {
+                                        callback(poi)
+                                    } else {
+                                        // fallback: directly update viewModel
+                                        viewModel.selectedPOI = poi
+                                        viewModel.centerOn(poi)
+                                    }
+                                }
                             }) {
                                 Image(systemName: "arrow.up.right.circle.fill")
                                     .foregroundColor(.blue)
                                     .font(.title2)
                             }
                             .buttonStyle(BorderlessButtonStyle())
+
                             // Delete button
                             Button(action: {
                                 viewModel.deleteFavorite(poi)
