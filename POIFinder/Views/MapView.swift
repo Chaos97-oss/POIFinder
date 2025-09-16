@@ -15,7 +15,7 @@ struct MapView: View {
     
     @State private var hasCenteredOnUser = false
     @State private var showingFavorites = false
-
+    
     var body: some View {
         ZStack(alignment: .top) {
             // MARK: - Map
@@ -47,7 +47,7 @@ struct MapView: View {
                     }
                 }
             }
-
+            
             // MARK: - Controls Overlay
             VStack(spacing: 10) {
                 topControlButtons
@@ -57,11 +57,11 @@ struct MapView: View {
             }
             .padding(.top, 50)
         }
-//        .sheet(isPresented: $showingFavorites) {
-//            FavoritesView(viewModel: viewModel)
-//        }
+        //        .sheet(isPresented: $showingFavorites) {
+        //            FavoritesView(viewModel: viewModel)
+        //        }
     }
-
+    
     // MARK: - Top Buttons
     private var topControlButtons: some View {
         HStack {
@@ -70,18 +70,18 @@ struct MapView: View {
                     .foregroundColor(.yellow)
                     .font(.title2)
             }
-
+            
             Button(action: centerOnUser) {
                 Image(systemName: "location.north.circle.fill")
                     .font(.title2)
                     .foregroundColor(.blue)
             }
-
+            
             Spacer()
         }
         .padding(.horizontal)
     }
-
+    
     private func centerOnUser() {
         guard let userCoord = locationManager.userLocation else { return }
         let userPOI = POI(
@@ -92,7 +92,7 @@ struct MapView: View {
         )
         viewModel.centerOn(userPOI)
     }
-
+    
     // MARK: - Search Bar
     private var searchBar: some View {
         HStack {
@@ -103,9 +103,9 @@ struct MapView: View {
                     viewModel.updateSearchQuery(newValue) // live suggestions
                 }
                 .onSubmit { performSearch() }
-
+            
             Spacer()
-
+            
             if !searchQuery.isEmpty || !viewModel.suggestions.isEmpty {
                 Button(action: clearSearch) {
                     Image(systemName: "xmark.circle.fill")
@@ -116,7 +116,7 @@ struct MapView: View {
         }
         .padding(.horizontal)
     }
-
+    
     private func clearSearch() {
         searchQuery = ""
         viewModel.suggestions = []
@@ -125,16 +125,29 @@ struct MapView: View {
             to: nil, from: nil, for: nil
         )
     }
-
+    
     // MARK: - Suggestions List
     private var suggestionsList: some View {
         if !viewModel.suggestions.isEmpty {
             return AnyView(
                 List(viewModel.suggestions, id: \.self) { suggestion in
                     Button(action: {
-                        searchQuery = suggestion.title
-                        viewModel.updateSearchQuery("") // clear suggestions
-                        performSearch(query: suggestion.title)
+                        let selectedTitle = suggestion.title
+                        searchQuery = selectedTitle
+                        
+                        // Perform search, then center on first POI
+                        performSearch(query: selectedTitle) { poi in
+                            viewModel.centerOn(poi)
+                        }
+                        
+                        // Delay clearing suggestions to avoid flicker
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                            viewModel.suggestions = []
+                            UIApplication.shared.sendAction(
+                                #selector(UIResponder.resignFirstResponder),
+                                to: nil, from: nil, for: nil
+                            )
+                        }
                     }) {
                         VStack(alignment: .leading) {
                             Text(suggestion.title).bold()
@@ -146,18 +159,18 @@ struct MapView: View {
                         }
                     }
                 }
-                .frame(maxHeight: 200)
-                .background(Color.white.opacity(0.9))
-                .cornerRadius(10)
-                .padding(.horizontal)
-                .transition(.move(edge: .top).combined(with: .opacity))
-                .animation(.easeInOut, value: viewModel.suggestions.count)
+                    .frame(maxHeight: 200)
+                    .background(Color.white.opacity(0.9))
+                    .cornerRadius(10)
+                    .padding(.horizontal)
+                    .transition(.move(edge: .top).combined(with: .opacity))
+                    .animation(.easeInOut, value: viewModel.suggestions.count)
             )
         } else {
             return AnyView(EmptyView())
         }
     }
-
+    
     // MARK: - Map Annotations
     private func annotationView(for annotation: POI) -> some View {
         Group {
@@ -190,7 +203,7 @@ struct MapView: View {
             }
         }
     }
-
+    
     // MARK: - Helpers
     private var userAnnotation: POI? {
         guard let coord = locationManager.userLocation else { return nil }
@@ -201,7 +214,7 @@ struct MapView: View {
             coordinate: coord
         )
     }
-
+    
     private var allAnnotations: [POI] {
         var annotations = viewModel.pois
         
@@ -217,11 +230,15 @@ struct MapView: View {
         
         return annotations
     }
-
-    private func performSearch(query: String? = nil) {
+    
+    private func performSearch(query: String? = nil, onResult: ((POI) -> Void)? = nil) {
         let coordinateToUse = locationManager.userLocation ?? viewModel.region.center
         let searchTerm = query ?? searchQuery
         guard !searchTerm.isEmpty else { return }
-        viewModel.searchPOIs(query: searchTerm, near: coordinateToUse)
+        viewModel.searchPOIs(query: searchTerm, near: coordinateToUse) { results in
+            if let first = results.first {
+                onResult?(first)
+            }
+        }
     }
 }
