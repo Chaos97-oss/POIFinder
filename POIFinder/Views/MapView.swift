@@ -83,8 +83,22 @@ struct MapView: View {
 
     private func centerOnUser() {
         guard let userCoord = locationManager.userLocation else { return }
-        let userPOI = POI(name: "You", category: "User", address: "Current Location", coordinate: userCoord)
-        withAnimation { viewModel.centerOn(userPOI) }
+
+        let targetRegion = MKCoordinateRegion(
+            center: userCoord,
+            span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05) // Normal zoom
+        )
+        DispatchQueue.main.async {
+            var tempRegion = targetRegion
+            tempRegion.center.latitude += 0.000001
+            tempRegion.center.longitude += 0.000001
+            self.viewModel.region = tempRegion
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
+                withAnimation {
+                    self.viewModel.region = targetRegion
+                }
+            }
+        }
     }
 
     // MARK: - Search Bar
