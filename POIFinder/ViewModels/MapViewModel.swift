@@ -16,6 +16,7 @@ class MapViewModel: ObservableObject {
     @Published var favorites: [POI] = []
     @Published var errorMessage: String?
     @Published var mapType: MKMapType = .standard
+    @Published var recentSearches: [POI] = []
     @Published var currentRoute: MKRoute?
     @Published var userLocation: CLLocationCoordinate2D?
     @Published var region: MKCoordinateRegion = MKCoordinateRegion(
@@ -64,6 +65,14 @@ class MapViewModel: ObservableObject {
                     self?.errorMessage = "Search failed: \(error.localizedDescription)"
                 }
             }
+        }
+    }
+    
+    func addToRecentSearches(_ poi: POI) {
+        recentSearches.removeAll(where: { $0.id == poi.id })
+        recentSearches.insert(poi, at: 0)
+        if recentSearches.count > 5 {
+            recentSearches = Array(recentSearches.prefix(5))
         }
     }
     

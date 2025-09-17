@@ -12,7 +12,7 @@ struct MapView: View {
     @StateObject private var viewModel = MapViewModel()
     @StateObject private var locationManager = LocationManager()
     @State private var searchQuery: String = ""
-    
+    @State private var isEditingDestination = false
     @State private var hasCenteredOnUser = false
     @State private var showingFavorites = false
 
@@ -104,13 +104,15 @@ struct MapView: View {
     // MARK: - Search Bar
     private var searchBar: some View {
         HStack {
-            TextField("Search places...", text: $searchQuery)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-                .submitLabel(.search)
-                .onChange(of: searchQuery) { newValue in
-                    viewModel.updateSearchQuery(newValue)
-                }
-                .onSubmit { performSearch() }
+            TextField("Search places...", text: $searchQuery, onEditingChanged: { isEditing in
+                isEditingDestination = isEditing
+            })
+            .textFieldStyle(RoundedBorderTextFieldStyle())
+            .submitLabel(.search)
+            .onChange(of: searchQuery) { newValue in
+                viewModel.updateSearchQuery(newValue)
+            }
+            .onSubmit { performSearch() }
 
             Spacer()
 
@@ -122,6 +124,9 @@ struct MapView: View {
                 }
             }
         }
+        .padding(.horizontal)
+        .background(Color.white.opacity(0.9))
+        .cornerRadius(10)
         .padding(.horizontal)
     }
 
@@ -136,29 +141,60 @@ struct MapView: View {
 
     // MARK: - Suggestions List
     private var suggestionsList: some View {
-        if !viewModel.suggestions.isEmpty {
-            return AnyView(
-                List(viewModel.suggestions, id: \.self) { suggestion in
-        Button(action: {
-            let selectedTitle = suggestion.title
-            searchQuery = selectedTitle
-            performSearch(query: selectedTitle) { poi in
-                viewModel.centerOn(poi)
-            }
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
-                viewModel.suggestions = []
-                UIApplication.shared.sendAction(
-                    #selector(UIResponder.resignFirstResponder),
-                    to: nil, from: nil, for: nil
-                )
+        VStack(spacing: 0) {
+            // Only show recent searches if the user is actively editing
+            if isEditingDestination && !viewModel.recentSearches.isEmpty {
+                VStack(spacing: 0) {
+                    ForEach(viewModel.recentSearches) { poi in
+                        Button(action: {
+                            searchQuery = poi.name
+                            viewModel.centerOn(poi)
+                            viewModel.selectedPOI = poi
+                            viewModel.addToRecentSearches(poi)
+                            dismissKeyboard()
+                        }) {
+                            HStack {
+                                Image(systemName: "clock.fill").foregroundColor(.gray)
+                                Text(poi.name).bold()
+                                Spacer()
+                            }
+                            .padding(.horizontal)
+                            .padding(.vertical, 6)
+                        }
                     }
-                    }) {
-                        VStack(alignment: .leading) {
-                            Text(suggestion.title).bold()
-                            if !suggestion.subtitle.isEmpty {
-                                Text(suggestion.subtitle)
-                                    .font(.subheadline)
-                                    .foregroundColor(.gray)
+                }
+                .background(Color.white.opacity(0.9))
+                .cornerRadius(10)
+                .padding(.horizontal)
+            }
+
+            // Live suggestions
+            if isEditingDestination && !viewModel.suggestions.isEmpty {
+                ScrollView {
+                    VStack(spacing: 0) {
+                        ForEach(viewModel.suggestions, id: \.self) { suggestion in
+                            Button(action: {
+                                let selectedTitle = suggestion.title
+                                searchQuery = selectedTitle
+                                performSearch(query: selectedTitle) { poi in
+                                    viewModel.centerOn(poi)
+                                    viewModel.addToRecentSearches(poi)
+                                }
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                                    viewModel.suggestions = []
+                                    dismissKeyboard()
+                                }
+                            }) {
+                                VStack(alignment: .leading) {
+                                    Text(suggestion.title).bold()
+                                    if !suggestion.subtitle.isEmpty {
+                                        Text(suggestion.subtitle)
+                                            .font(.subheadline)
+                                            .foregroundColor(.gray)
+                                    }
+                                }
+                                .padding(.horizontal)
+                                .padding(.vertical, 6)
                             }
                         }
                     }
@@ -167,15 +203,13 @@ struct MapView: View {
                 .background(Color.white.opacity(0.9))
                 .cornerRadius(10)
                 .padding(.horizontal)
-                .transition(.move(edge: .top).combined(with: .opacity))
-                .animation(.easeInOut, value: viewModel.suggestions.count)
-            )
-        } else {
-            return AnyView(EmptyView())
+            }
         }
+        .animation(.easeInOut, value: viewModel.suggestions.count)
     }
 
     private func dismissKeyboard() {
+        isEditingDestination = false
         UIApplication.shared.sendAction(
             #selector(UIResponder.resignFirstResponder),
             to: nil, from: nil, for: nil
