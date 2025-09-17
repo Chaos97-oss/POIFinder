@@ -142,16 +142,17 @@ struct MapView: View {
     // MARK: - Suggestions List
     private var suggestionsList: some View {
         VStack(spacing: 0) {
-            // Only show recent searches if the user is actively editing
             if isEditingDestination && !viewModel.recentSearches.isEmpty {
                 VStack(spacing: 0) {
                     ForEach(viewModel.recentSearches) { poi in
                         Button(action: {
                             searchQuery = poi.name
-                            viewModel.centerOn(poi)
-                            viewModel.selectedPOI = poi
-                            viewModel.addToRecentSearches(poi)
                             dismissKeyboard()
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                                viewModel.centerOn(poi)
+                                viewModel.selectedPOI = poi
+                                viewModel.addToRecentSearches(poi)
+                            }
                         }) {
                             HStack {
                                 Image(systemName: "clock.fill").foregroundColor(.gray)
@@ -167,8 +168,7 @@ struct MapView: View {
                 .cornerRadius(10)
                 .padding(.horizontal)
             }
-
-            // Live suggestions
+            
             if isEditingDestination && !viewModel.suggestions.isEmpty {
                 ScrollView {
                     VStack(spacing: 0) {
@@ -176,13 +176,16 @@ struct MapView: View {
                             Button(action: {
                                 let selectedTitle = suggestion.title
                                 searchQuery = selectedTitle
-                                performSearch(query: selectedTitle) { poi in
-                                    viewModel.centerOn(poi)
-                                    viewModel.addToRecentSearches(poi)
-                                }
+                                dismissKeyboard()
                                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
-                                    viewModel.suggestions = []
-                                    dismissKeyboard()
+                                performSearch(query: selectedTitle) { poi in
+                                    withAnimation {
+                                        viewModel.centerOn(poi)
+                                        viewModel.selectedPOI = poi
+                                        viewModel.addToRecentSearches(poi)
+                                        viewModel.suggestions = []
+                                        }
+                                    }
                                 }
                             }) {
                                 VStack(alignment: .leading) {
