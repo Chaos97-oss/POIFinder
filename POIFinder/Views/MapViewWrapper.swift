@@ -54,7 +54,7 @@ struct MapViewWrapper: UIViewRepresentable {
             return view
         }
 
-        private func markerColor(for annotation: POIAnnotation) -> UIColor {
+        func markerColor(for annotation: POIAnnotation) -> UIColor {
             switch annotation.category {
             case "User": return .systemRed
             case "Favorite": return .systemYellow
@@ -182,6 +182,8 @@ struct MapViewWrapper: UIViewRepresentable {
     private func updateAnnotations(on uiView: MKMapView, context: Context) {
         let newKeys = Set(pois.map { context.coordinator.annotationKey(for: $0) })
         let oldKeys = Set(context.coordinator.annotationMap.keys)
+        
+        // --- Add new annotations ---
         let keysToAdd = newKeys.subtracting(oldKeys)
         for poi in pois where keysToAdd.contains(context.coordinator.annotationKey(for: poi)) {
             let annotation = POIAnnotation(
@@ -193,11 +195,25 @@ struct MapViewWrapper: UIViewRepresentable {
             context.coordinator.annotationMap[context.coordinator.annotationKey(for: poi)] = annotation
             uiView.addAnnotation(annotation)
         }
+        // --- Remove old annotations ---
         let keysToRemove = oldKeys.subtracting(newKeys)
         for key in keysToRemove {
             if let ann = context.coordinator.annotationMap[key] {
                 uiView.removeAnnotation(ann)
                 context.coordinator.annotationMap.removeValue(forKey: key)
+            }
+        }
+        // ---  Update existing annotations if category changed ---
+        for poi in pois {
+            let key = context.coordinator.annotationKey(for: poi)
+            if let ann = context.coordinator.annotationMap[key] {
+                let newCategory = poi.isFavorite ? "Favorite" : poi.category
+                if ann.category != newCategory {
+                    ann.category = newCategory
+                    if let view = uiView.view(for: ann) as? MKMarkerAnnotationView {
+                        view.markerTintColor = context.coordinator.markerColor(for: ann)
+                    }
+                }
             }
         }
     }
@@ -227,7 +243,7 @@ struct MapViewWrapper: UIViewRepresentable {
         let title: String?
         let subtitle: String?
         let coordinate: CLLocationCoordinate2D
-        let category: String
+        var category: String
 
         init(title: String, subtitle: String, coordinate: CLLocationCoordinate2D, category: String) {
             self.title = title
