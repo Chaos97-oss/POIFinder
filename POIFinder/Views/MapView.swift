@@ -86,16 +86,17 @@ struct MapView: View {
 
         let targetRegion = MKCoordinateRegion(
             center: userCoord,
-            span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
+            span: MKCoordinateSpan(latitudeDelta: 0.02, longitudeDelta: 0.02)
         )
         DispatchQueue.main.async {
-            var tempRegion = targetRegion
-            tempRegion.center.latitude += 0.000001
-            tempRegion.center.longitude += 0.000001
-            self.viewModel.region = tempRegion
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
-                withAnimation {
-                    self.viewModel.region = targetRegion
+            self.viewModel.region = MKCoordinateRegion(
+                        center: userCoord,
+                        span: MKCoordinateSpan(latitudeDelta: targetRegion.span.latitudeDelta * 1.001,
+                        longitudeDelta: targetRegion.span.longitudeDelta * 1.001)
+                    )
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
+                        withAnimation {
+                            self.viewModel.region = targetRegion
                 }
             }
         }

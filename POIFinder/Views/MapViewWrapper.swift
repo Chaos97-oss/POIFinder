@@ -89,10 +89,7 @@ struct MapViewWrapper: UIViewRepresentable {
         }
 
         func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
-            if isUserDraggingMap {
-                parent.region = mapView.region
-                isUserDraggingMap = false
-            }
+            parent.region = mapView.region
         }
 
         // MARK: - Overlays
