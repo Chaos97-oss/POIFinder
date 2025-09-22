@@ -72,10 +72,8 @@ class MapViewModel: ObservableObject {
 
     // MARK: - Recent Searches
     func addToRecentSearches(_ poi: POI) {
-        // Remove duplicates & insert at top
         recentSearches.removeAll { $0.id == poi.id }
         recentSearches.insert(poi, at: 0)
-        // Limit recent searches to 5
         if recentSearches.count > 5 {
             recentSearches = Array(recentSearches.prefix(5))
         }
@@ -133,7 +131,13 @@ class MapViewModel: ObservableObject {
             return updated
         }
     }
-
+    
+    // MARK: - Clear Selection
+    func dismissPOI() {
+        selectedPOI = nil
+        currentRoute = nil  
+    }
+    
     // MARK: - Map Type
     func toggleMapType() {
         mapType = (mapType == .standard) ? .mutedStandard : .standard

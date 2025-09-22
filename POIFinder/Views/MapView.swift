@@ -86,7 +86,7 @@ struct MapView: View {
 
         let targetRegion = MKCoordinateRegion(
             center: userCoord,
-            span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05) // Normal zoom
+            span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
         )
         DispatchQueue.main.async {
             var tempRegion = targetRegion
@@ -128,6 +128,7 @@ struct MapView: View {
         searchQuery = ""
         viewModel.suggestions = []
         hideKeyboard()
+        viewModel.dismissPOI()
     }
 
     // MARK: - Suggestions & Recent Searches
@@ -151,7 +152,7 @@ struct MapView: View {
                 }
             }
 
-            // Then show live suggestions
+            
             if !viewModel.suggestions.isEmpty {
                 ScrollView {
                     VStack(spacing: 0) {
