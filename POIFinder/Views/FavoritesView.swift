@@ -46,6 +46,12 @@ struct FavoritesView: View {
                                 Text(poi.address)
                                     .font(.subheadline)
                                     .foregroundColor(.gray)
+                                if let note = poi.note, !note.isEmpty {
+                                                Text("Note: \(note)")
+                                                    .font(.footnote)
+                                                    .foregroundColor(.secondary)
+                                                    .italic()
+                                            }
                             }
 
                             Spacer()

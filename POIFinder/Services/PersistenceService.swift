@@ -28,17 +28,32 @@ class PersistenceService {
 
     // MARK: - Save POI
     func save(poi: POI) {
-        let entity = NSEntityDescription.entity(forEntityName: "FavoritePOI", in: context)!
-        let favorite = NSManagedObject(entity: entity, insertInto: context)
-        favorite.setValue(poi.name, forKey: "name")
-        favorite.setValue(poi.category, forKey: "category")
-        favorite.setValue(poi.address, forKey: "address")
-        favorite.setValue(poi.coordinate.latitude, forKey: "latitude")
-        favorite.setValue(poi.coordinate.longitude, forKey: "longitude")
+        let request: NSFetchRequest<NSManagedObject> = NSFetchRequest(entityName: "FavoritePOI")
+        request.predicate = NSPredicate(
+            format: "name == %@ AND latitude == %lf AND longitude == %lf",
+            poi.name, poi.coordinate.latitude, poi.coordinate.longitude
+        )
 
         do {
+            let results = try context.fetch(request)
+            let favorite: NSManagedObject
+
+            if let existing = results.first {
+                favorite = existing
+            } else {
+                let entity = NSEntityDescription.entity(forEntityName: "FavoritePOI", in: context)!
+                favorite = NSManagedObject(entity: entity, insertInto: context)
+            }
+
+            favorite.setValue(poi.name, forKey: "name")
+            favorite.setValue(poi.category, forKey: "category")
+            favorite.setValue(poi.address, forKey: "address")
+            favorite.setValue(poi.coordinate.latitude, forKey: "latitude")
+            favorite.setValue(poi.coordinate.longitude, forKey: "longitude")
+            favorite.setValue(poi.note, forKey: "note")
+
             try context.save()
-            print("POI saved: \(poi.name)")
+            print("POI saved/updated: \(poi.name)")
         } catch {
             print("Failed to save POI: \(error)")
         }
@@ -62,7 +77,8 @@ class PersistenceService {
                     name: name,
                     category: category,
                     address: address,
-                    coordinate: CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+                    coordinate: CLLocationCoordinate2D(latitude: latitude, longitude: longitude),
+                    note: fav.value(forKey: "note") as? String
                 )
             }
         } catch {
@@ -70,6 +86,27 @@ class PersistenceService {
             return []
         }
     }
+    
+    func updateNote(for poi: POI, note: String) {
+        let request: NSFetchRequest<NSManagedObject> = NSFetchRequest(entityName: "FavoritePOI")
+        request.predicate = NSPredicate(
+            format: "name == %@ AND latitude == %lf AND longitude == %lf",
+            poi.name, poi.coordinate.latitude, poi.coordinate.longitude
+        )
+
+        do {
+            if let objectToUpdate = try context.fetch(request).first {
+                objectToUpdate.setValue(note, forKey: "note")
+                try context.save()
+                print("Updated note for \(poi.name): \(note)")
+            } else {
+                print("POI not found in favorites, note not saved")
+            }
+        } catch {
+            print("Failed to update note:", error)
+        }
+    }
+    
 
     // MARK: - Delete POI
     func delete(poi: POI) {

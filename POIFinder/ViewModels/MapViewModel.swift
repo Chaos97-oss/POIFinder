@@ -83,6 +83,8 @@ class MapViewModel: ObservableObject {
     func updateNote(for poi: POI, note: String) {
         if let index = pois.firstIndex(where: { $0.id == poi.id }) { pois[index].note = note }
         if let index = favorites.firstIndex(where: { $0.id == poi.id }) { favorites[index].note = note }
+        objectWillChange.send()
+        PersistenceService.shared.updateNote(for: poi, note: note)
     }
 
     // MARK: - Directions
